@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+    <title>Register</title>
+    <style>
+        .password{
+            float: right;
+            margin-right: 15px;
+            margin-top: -35px;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body style="background-color: #f7f9fb;">
+    <div class="container p-5 mt-5 rounded col-4" style="background-color: white; box-shadow: 0 4px 8px rgba(0,0,0,.05);">
+        <div class="mb-4 text-center"><h1>Register</h1></div>
+        <form action="/register" method="post">
+            <div class="text-danger"><%= err ? err : "" %></div>
+            <div class="form-floating mb-3">
+                <input name="email" type="email" class="form-control" id="email" placeholder="name@example.com" autocomplete="off">
+                <label for="email">Email address</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input name="username" type="text" class="form-control" id="username" placeholder="name@example.com" autocomplete="off">
+                <label for="username">Username</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+                <i class="fa password" id="pwd" aria-hidden="true"></i>
+                <label for="password">Password</label>
+                <div class="d-none" id="mark">!&#x20DD;</div>
+                <p id="strength" class="d-none"></p>
+            </div>
+            <div class="form-floating mb-3">
+                <input name="password2" type="password" class="form-control" id="password2" placeholder="Password">
+                <i class="fa password" id="pwd2" aria-hidden="true"></i>
+                <label for="password2">Confirm Password</label>
+                <p id="strength2" class="d-none"></p>
+            </div>
+            <div class="form-floating d-grid mb-3">
+                <button type="submit" class="btn btn-primary btn-lg">Register</button>
+            </div>
+            <div class="text-center">Have an account? <a href="/login">Login</a></div>
+        </form>
+    </div>
+    <script>
+        let x, y;
+        let mark = document.querySelector('#mark').textContent
+        let alphabet = /[a-zA-Z]/,
+            numbers = /[0-9]/,
+            scharacters = /[!,@,#,$,%,^,&,*,?,_,(,),-,+,=,~]/;
+
+        document.querySelector('#password').addEventListener('keyup', (e) => {
+            // if (e.target.value === 'aaa') {
+                if (e.target.value.match(alphabet) || e.target.value.match(numbers) || e.target.value.match(scharacters)) {
+                    document.querySelector('#strength').className = "";
+                    document.querySelector('#password').className = "";
+                    document.querySelector('#password').classList.add('form-control', 'border', 'border-2', 'border-danger')
+                    document.querySelector('#strength').textContent = mark+" Password is weak"
+                    document.querySelector('#strength').classList.add('text-danger')
+                }
+                if (e.target.value.match(alphabet) && e.target.value.match(numbers) && e.target.value.length >= 6) {
+                    document.querySelector('#strength').className = "";
+                    document.querySelector('#password').className = "";
+                    document.querySelector('#password').classList.add('form-control', 'border', 'border-2', 'border-warning')
+                    document.querySelector('#strength').textContent = mark+" Password is medium"
+                    document.querySelector('#strength').classList.add('text-warning')
+                } 
+                if (e.target.value.match(alphabet) && e.target.value.match(numbers) && e.target.value.match(scharacters) && e.target.value.length >= 8) {
+                    document.querySelector('#strength').className = "";
+                    document.querySelector('#password').className = "";
+                    document.querySelector('#password').classList.add('form-control', 'border', 'border-2', 'border-success')
+                    document.querySelector('#strength').textContent = mark+" Password is strong"
+                    document.querySelector('#strength').classList.add('text-success')
+                } 
+
+            if (y !== undefined) {
+                if (y === e.target.value) {
+                    document.querySelector('#strength2').className = "";
+                    document.querySelector('#password2').className = "";
+                    document.querySelector('#password2').classList.add('form-control', 'border', 'border-2', 'border-success')
+                    document.querySelector('#strength2').textContent = mark+" Password is match"
+                    document.querySelector('#strength2').classList.add('text-success')
+                } else {
+                    document.querySelector('#strength2').className = "";
+                    document.querySelector('#password2').className = "";
+                    document.querySelector('#password2').classList.add('form-control', 'border', 'border-2', 'border-danger')
+                    document.querySelector('#strength2').textContent = mark+" Password is not match"
+                    document.querySelector('#strength2').classList.add('text-danger')
+                }
+            }
+            x = e.target.value
+        })
+        document.querySelector('#password2').addEventListener('keyup', (e) => {
+            if (x === e.target.value) {
+                document.querySelector('#strength2').className = "";
+                document.querySelector('#password2').className = "";
+                document.querySelector('#password2').classList.add('form-control', 'border', 'border-2', 'border-success')
+                document.querySelector('#strength2').textContent = mark+" Password is match"
+                document.querySelector('#strength2').classList.add('text-success')
+            } else {
+                document.querySelector('#strength2').className = "";
+                document.querySelector('#password2').className = "";
+                document.querySelector('#password2').classList.add('form-control', 'border', 'border-2', 'border-danger')
+                document.querySelector('#strength2').textContent = mark+" Password is not match"
+                document.querySelector('#strength2').classList.add('text-danger')
+            }
+
+            y = e.target.value
+        })
+        document.querySelector('#pwd').classList.toggle("fa-eye");
+        document.querySelector('#pwd').addEventListener('click', (e) => {
+            if (document.querySelector('#password').getAttribute("type") === 'text') {
+                document.querySelector('#password').setAttribute("type", "password");
+            } else {
+                document.querySelector('#password').setAttribute("type", "text");
+            }
+            document.querySelector('#pwd').classList.toggle("fa-eye-slash");
+        })
+        document.querySelector('#pwd2').classList.toggle("fa-eye");
+        document.querySelector('#pwd2').addEventListener('click', (e) => {
+            if (document.querySelector('#password2').getAttribute("type") === 'text') {
+                document.querySelector('#password2').setAttribute("type", "password");
+            } else {
+                document.querySelector('#password2').setAttribute("type", "text");
+            }
+            document.querySelector('#pwd2').classList.toggle("fa-eye-slash");
+        })
+    </script>
+</body>
+</html>
