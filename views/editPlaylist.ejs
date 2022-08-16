@@ -10,18 +10,21 @@
 </head>
 <body style="background-color: #121212;">
     <div class="container p-5 mt-5 rounded col-4" style="background-color: #242424; box-shadow: 0 4px 8px rgba(0,0,0,.05);">
-        <div class="mb-4 text-center text-light"><h1>Edit Playlist</h1></div>
+        <a href="/playlists/<%= playlist.id %>" class="btn btn-outline-secondary btn-sm">Back</a>
+        <div class="mb-4 text-center text-light d-flex justify-content-center">
+            <h1>Edit Playlist</h1>
+        </div>
         <form action="/playlists/<%= playlist.id %>/edit" method="post">
-            <div class="form-floating mb-3">
-                <input name="name" type="text" class="form-control" id="name" value="<%= playlist.name %>" autocomplete="off">
+            <div class="form-floating mb-3 text-light">
+                <input name="name" type="text" class="form-control bg-dark text-light fw-light" id="name" value="<%= playlist.name %>" autocomplete="off">
                 <label for="name">Playlist name</label>
             </div>
-            <div class="form-floating mb-3">
-                <input name="thumbnailUrl" type="text" class="form-control" id="thumbnailUrl" value="<%= playlist.thumbnailUrl %>" autocomplete="off">
+            <div class="form-floating mb-3 text-light">
+                <input name="thumbnailUrl" type="text" class="form-control bg-dark text-light fw-light" id="thumbnailUrl" value="<%= playlist.thumbnailUrl %>" autocomplete="off">
                 <label for="thumbnailUrl">Thumbnail Url</label>
             </div>
-            <div class="form-floating d-grid mb-3">
-                <button type="submit" class="btn btn-primary btn-lg">Edit playlist</button>
+            <div class="form-floating d-grid mb-3 text-light">
+                <button type="submit" class="btn btn-outline-secondary btn-lg">Edit playlist</button>
             </div>
         </form>
     </div>

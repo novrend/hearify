@@ -13,7 +13,11 @@
             <img src="<%= playlist.thumbnailUrl %>" class="rounded me-4" width="200">
             <div>
                 <h1 class="text-light"><%= playlist.name %></h1>
-                <h3><a href="/playlists/<%= playlist.id %>/edit" class="btn btn-link">Edit playlist</a></h3>
+                <div class="d-flex">
+                    <h3><a href="/playlists/<%= playlist.id %>/edit" class="btn btn-outline-secondary m-2">Edit playlist</a></h3>
+                    <h3><a href="/playlists/<%= playlist.id %>/edit/song" class="btn btn-outline-secondary m-2">Add song</a></h3>
+                </div>
+                <h3><a href="/playlists" class="btn btn-outline-secondary m-2">Back to all playlist list</a></h3>
             </div>
         </div>
         <table class="table table-borderless text-light fw-lighter my-4">
@@ -26,12 +30,14 @@
                 </tr>
             </thead>
             <tbody class="table-group-divider">
+                <% let i = 1; for (song of playlist.PlaylistSongs) { %>
                 <tr>
-                    <td>saklfas</td>
-                    <td>ajsflna</td>
-                    <td>akslfn</td>
-                    <td>aklsfn</td>
+                    <td><%= i %></td>
+                    <td><%= song.Song.title %></td>
+                    <td><%= song.Song.artist %></td>
+                    <td><a href="/playlists/<%= playlist.id %>/delete/<%= song.Song.id %>" class="btn btn-outline-danger">Delete</a></td>
                 </tr>
+                <% i++; } %>
             </tbody>
         </table>
     </div>

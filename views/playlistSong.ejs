@@ -13,7 +13,10 @@
             <img src="<%= playlist.thumbnailUrl %>" class="rounded me-4" width="200">
             <div>
                 <h1 class="text-light"><%= playlist.name %></h1>
-                <h3><a href="/playlists/<%= playlist.id %>/edit" class="btn btn-link">Edit playlist</a></h3>
+                <div class="d-flex">
+                    <h3><a href="/playlists/<%= playlist.id %>/edit" class="btn btn-outline-secondary m-2">Edit playlist</a></h3>
+                    <h3><a href="/playlists/<%= playlist.id %>" class="btn btn-outline-secondary m-2">Back to playlist details</a></h3>
+                </div>
             </div>
         </div>
         <form action="/playlists/<%= playlist.id %>/edit/song" class="text-light fw-lighter my-4" method="post">
@@ -28,13 +31,13 @@
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                    <% let i = 1; for (obj of playlist.PlaylistSongs) { %>
+                    <% let i = 1; for (song of playlist.Songs) { %>
                         <tr>
                             <td><%= i %></td>
-                            <td><%= obj.Song.title %></td>
-                            <td><%= obj.Song.artist %></td>
+                            <td><%= song.title %></td>
+                            <td><%= song.artist %></td>
                             <td>
-                                <a href="/playlists/<%= playlist.id %>/edit/song/<%= obj.Song.id %>" class="btn btn-outline-dark text-light fw-lighter">Add Song</a>
+                                <a href="/playlists/<%= playlist.id %>/edit/song/<%= song.id %>" class="btn btn-outline-dark text-light fw-lighter">Add Song</a>
                             </td>
                         </tr>
                     <% i++; } %>

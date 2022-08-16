@@ -1,18 +1,16 @@
 const router = require('express').Router()
 const Playlist = require('../controllers/playlist');
-const { isLogged, isLoggedIn } = require('../middlewares/auth');
+const { isLogged, isLoggedIn, isAdmin } = require('../middlewares/auth');
 
 router.get('/', isLoggedIn, Playlist.playlistsPage)
 router.get('/add', isLoggedIn, Playlist.addPlaylistPage)
 router.post('/add', isLoggedIn, Playlist.addPlaylist)
+router.get('/all', isLoggedIn, isAdmin, Playlist.allPlaylistsDetailPage)
 router.get('/:playlistId', isLoggedIn, Playlist.playlistDetailPage)
 router.get('/:playlistId/edit', isLoggedIn, Playlist.editPlaylistPage)
-router.post('/:playlistId/edit', isLoggedIn)
-
-router.get('/:playlistId/edit/song', Playlist.editPlaylistSongPage)
-router.get('/:playlistId/edit/song/:songId', Playlist.editPlaylistSong)
-
-router.get('/:playlistId/delete', isLoggedIn)
-router.get('/:playlistId/delete/:songId', isLoggedIn)
+router.post('/:playlistId/edit')
+router.get('/:playlistId/edit/song', isLoggedIn, Playlist.editPlaylistSongPage)
+router.get('/:playlistId/edit/song/:songId', isLoggedIn, Playlist.editPlaylistSong)
+router.get('/:playlistId/delete/:songId', isLoggedIn, Playlist.deleteSongFromPlaylist)
 
 module.exports = router

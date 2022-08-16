@@ -2,7 +2,6 @@ const router = require('express').Router();
 const user = require('../controllers/user');
 const songs = require('./songs');
 const playlists = require('./playlists');
-const playlistsong = require('./playlistsong');
 const { isLogged, isLoggedIn } = require('../middlewares/auth');
 
 router.get('/', isLoggedIn, user.home)
@@ -14,6 +13,5 @@ router.get('/logout', isLoggedIn, user.logout)
 
 router.use('/songs', songs)
 router.use('/playlists', playlists)
-router.use('/playlistsong', playlistsong)
 
 module.exports = router

@@ -18,24 +18,24 @@
         }
     </style>
 </head>
-<body style="background-color: #f7f9fb;">
-    <div class="container p-5 mt-5 rounded col-4" style="background-color: white; box-shadow: 0 4px 8px rgba(0,0,0,.05);">
+<body style="background-color: #121212;">
+    <div class="container p-5 mt-5 rounded col-4 text-light fw-light" style="background-color: #242424; box-shadow: 0 4px 8px rgba(0,0,0,.05);">
         <div class="mb-4 text-center"><h1>Login</h1></div>
         <form action="/login" method="post">
             <div class="text-danger"><%= err ? err : "" %></div>
             <div class="form-floating mb-3">
-                <input name="email" type="text" class="form-control" id="email" placeholder="name@example.com" autocomplete="off">
+                <input name="email" type="text" class="form-control bg-dark text-light fw-light" id="email" placeholder="name@example.com" autocomplete="off">
                 <label for="email">Email address or username</label>
             </div>
             <div class="form-floating mb-3">
-                <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+                <input name="password" type="password" class="form-control bg-dark text-light fw-light" id="password" placeholder="Password">
                 <i class="fa password" id="pwd" aria-hidden="true"></i>
                 <label for="password">Password</label>
                 <div class="d-none" id="mark">!&#x20DD;</div>
                 <p id="strength" class="d-none"></p>
             </div>
             <div class="form-floating d-grid mb-3">
-                <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                <button type="submit" class="btn btn-outline-secondary btn-lg">Login</button>
             </div>
             <div class="text-center">Don't have an account? <a href="/register">Register</a></div>
         </form>

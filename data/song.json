@@ -22,5 +22,57 @@
     {
         "title" : "Ghost",
         "artist" : "Justin Bieber"
+    },
+    {
+        "title" : "I Ain't Worried",
+        "artist" : "One Republic"
+    },
+    {
+        "title" : "thank u, next",
+        "artist" : "Ariana Grande"
+    },
+    {
+        "title" : "Levitating",
+        "artist" : "Dua Lipa"
+    },
+    {
+        "title" : "Thinking out Loud",
+        "artist" : "Ed Sheeran"
+    },
+    {
+        "title" : "Do I Wanna Know?",
+        "artist" : "Arctic Monkeys"
+    },
+    {
+        "title" : "Vegas",
+        "artist" : "Doja Cat"
+    },
+    {
+        "title" : "TV",
+        "artist" : "Billie Eilish"
+    },
+    {
+        "title" : "Lover",
+        "artist" : "Taylor Swift"
+    },
+    {
+        "title" : "No Surprises",
+        "artist" : "Radiohead"
+    },
+    {
+        "title" : "Somebody To Love",
+        "artist" : "Queen"
+    },
+    {
+        "title" : "Gravity",
+        "artist" : "John Mayer"
+    },
+    {
+        "title" : "Japanese Denim",
+        "artist" : "Daniel Caesar"
+    },
+    {
+        "title" : "Almost Is Never Enough",
+        "artist" : "Ariana Grande"
     }
 ]

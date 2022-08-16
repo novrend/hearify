@@ -12,11 +12,19 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Playlist.belongsTo(models.User, {foreignKey: 'UserId'})
-      Playlist.hasMany(models.PlaylistSong, {foreignKey: 'PlaylistId', as: 'PlaylistSong'})
+      Playlist.hasMany(models.PlaylistSong, {foreignKey: 'PlaylistId'})
     }
   }
   Playlist.init({
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args : [2,10],
+          msg: "Min length is two characters and max length is ten characters"
+        }
+      }
+    },
     UserId: DataTypes.INTEGER,
     thumbnailUrl: DataTypes.STRING
   }, {

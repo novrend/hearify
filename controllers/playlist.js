@@ -1,5 +1,6 @@
-const { Song, Playlist, PlaylistSong } = require('../models')
+const { Song, Playlist, PlaylistSong, sequelize } = require('../models')
 const { Op } = require('sequelize');
+const { QueryTypes } = require('sequelize');
 
 class Controller {
     static playlistsPage(req, res) {
@@ -24,7 +25,6 @@ class Controller {
     static addPlaylist(req, res) {
         const { name, thumbnailUrl } = req.body
         const { id } = req.session.user
-        console.log(id)
         Playlist.create({
             name,
             thumbnailUrl,
@@ -34,15 +34,51 @@ class Controller {
                 res.redirect(`/playlists/${results.id}`)
             })
             .catch(err => {
-                console.log(err)
                 res.send(err)
             })
     }
     static playlistDetailPage(req, res) {
+        const { id } = req.session.user
         const { playlistId } = req.params
-        Playlist.findByPk(playlistId)
+        Playlist.findOne({
+            where : {
+                [Op.and]: [
+                    {
+                        UserId : {
+                            [Op.eq] : id
+                        },
+                    },
+                    {
+                        id : {
+                            [Op.eq] : playlistId
+                        }
+                    }
+                ]
+            }
+        })
             .then(results => {
-                res.render('playlistDetail', {playlist: results})
+                if (results) {
+                    return Playlist.findOne({
+                        include : [{
+                            model: PlaylistSong,
+                            include: [{
+                                model: Song
+                            }]
+                        }],
+                        where: {
+                            id : {
+                                [Op.eq] : playlistId
+                            }
+                        }
+                    })
+                } else {
+                    res.send('This is not your playlist')
+                }
+            })
+            .then(results => {
+                if (results) {
+                    res.render('playlistDetail', {playlist: results})
+                }
             })
             .catch(err => {
                 res.send(err)
@@ -55,9 +91,17 @@ class Controller {
         Playlist.findOne({
             where : {
                 [Op.and]: [
-                    { UserId: id },
-                    { id: playlistId }
-                  ]
+                    {
+                        UserId : {
+                            [Op.eq] : id
+                        },
+                    },
+                    {
+                        id : {
+                            [Op.eq] : playlistId
+                        }
+                    }
+                ]
             }
         })
             .then(results => {
@@ -72,58 +116,69 @@ class Controller {
             })
     }
     static editPlaylistSongPage(req, res) {
-        // const { id } = req.session.user
-        const id = 1
+        const { id } = req.session.user
         const { playlistId } = req.params
+        let playlist = {}
         Playlist.findOne({
             where : {
                 [Op.and]: [
-                    { UserId: id },
-                    { id: playlistId }
-                  ]
+                    {
+                        UserId : {
+                            [Op.eq] : id
+                        },
+                    },
+                    {
+                        id : {
+                            [Op.eq] : playlistId
+                        }
+                    }
+                ]
             }
         })
             .then(results => {
                 if (results) {
-                    return Song.findAll({
-                        include: [{
-                            model: PlaylistSong,
-                            as: 'PlaylistSong'
-                        }],
-                        where: {
-                            '$PlaylistSong.PlaylistId$': {
-                                [Op.or]: {
-                                    [Op.ne]: 2,
-                                    [Op.is]: null
-                                }
-                            }
-                        }
+                    playlist = results
+                    return sequelize.query(`
+                    SELECT * FROM "Songs" WHERE "id" NOT IN (
+                        SELECT "Song"."id" AS "Song.id"
+                        FROM "PlaylistSongs" AS "PlaylistSong" 
+                        LEFT OUTER JOIN "Songs" AS "Song" 
+                        ON "PlaylistSong"."SongId" = "Song"."id"
+                        WHERE "PlaylistSong"."PlaylistId" = ${playlistId}
+                    )`, {
+                        type: QueryTypes.SELECT
                     })
-                    // res.render('playlistSong', { playlist: results })
                 } else {
                     res.send('This is not your playlist')
                 }
             })
             .then(results => {
                 if (results) {
-                    res.send(results)
+                    playlist.Songs = results
+                    res.render('playlistSong', { playlist: playlist })
                 }
             })
             .catch(err => {
-                console.log(err)
                 res.send(err)
             })
     }
     static editPlaylistSong(req, res) {
         const { id } = req.session.user
         const { playlistId, songId } = req.params
-        const { song } = req.body
         Playlist.findOne({
             where : {
                 [Op.and]: [
-                    { UserId: id },
-                    { id: playlistId }
-                  ]
+                    {
+                        UserId : {
+                            [Op.eq] : id
+                        },
+                    },
+                    {
+                        id : {
+                            [Op.eq] : playlistId
+                        }
+                    }
+                ]
             }
         })
             .then(results => {
@@ -142,6 +197,66 @@ class Controller {
                 }
             })
             .catch(err => {
+                res.send(err)
+            })
+    }
+    static deleteSongFromPlaylist(req, res) {
+        const { id } = req.session.user
+        const { playlistId, songId } = req.params
+        Playlist.findOne({
+            where : {
+                [Op.and]: [
+                    {
+                        UserId : {
+                            [Op.eq] : id
+                        },
+                    },
+                    {
+                        id : {
+                            [Op.eq] : playlistId
+                        }
+                    }
+                ]
+            }
+        })
+            .then(results => {
+                if (results) {
+                    return PlaylistSong.destroy({
+                        where: {
+                            [Op.and] : [
+                                {
+                                    PlaylistId: {
+                                        [Op.eq] : playlistId
+                                    }
+                                },
+                                {
+                                    SongId: {
+                                        [Op.eq] : songId
+                                    }
+                                }
+                            ]
+                        }
+                    })
+                } else {
+                    res.send('This is not your playlist')
+                }
+            })
+            .then(results => {
+                if (results) {
+                    res.redirect(`/playlists/${playlistId}`)
+                }
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+    static allPlaylistsDetailPage(req, res) {
+        Playlist.findAll()
+            .then(results => {
+                res.render('playlists', { playlists: results })
+            })
+            .catch(err => {
+                console.log(err)
                 res.send(err)
             })
     }

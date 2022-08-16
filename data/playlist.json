@@ -1,0 +1,22 @@
+[
+    {
+        "name" : "Old",
+        "thumbnailUrl" : "https://i.scdn.co/image/ab67706c0000bebbae213e52eae2481edc35aeeb",
+        "UserId" : 1
+    },
+    {
+        "name" : "Nyantai",
+        "thumbnailUrl" : "https://i.scdn.co/image/ab67706f00000003cc5fe318480bddd3012cf4bd",
+        "UserId" : 1
+    },
+    {
+        "name" : "Pop",
+        "thumbnailUrl": "https://seed-mix-image.spotifycdn.com/v6/img/pop/6M2wZ9GZgrQXHCFfjv46we/id/large",
+        "UserId" : 2
+    },
+    {
+        "name" : "Hits",
+        "thumbnailUrl": "https://i.scdn.co/image/ab67706f00000003f77fbf34ff94222d117356dc",
+        "UserId" : 2
+    }
+]
