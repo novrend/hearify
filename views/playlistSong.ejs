@@ -10,9 +10,9 @@
 </head>
 <body style="background-color: #121212;">
     <div class="container p-5">
-        <div class="d-flex">
+        <div class="d-flex flex-row">
             <img src="<%= playlist.thumbnailUrl %>" class="rounded me-4" width="200">
-            <div>
+            <div class="col">
                 <h1 class="text-light"><%= playlist.name %></h1>
                 <div class="d-flex">
                     <h3><a href="/playlists/<%= playlist.id %>/edit" class="btn btn-outline-secondary m-2">Edit playlist</a></h3>
@@ -20,9 +20,25 @@
                 </div>
             </div>
         </div>
-        <form action="/playlists/<%= playlist.id %>/edit/song" class="text-light fw-lighter my-4" method="post">
-            <h1>Add song to your playlist</h1>
-            <table class="table table-borderless my-4 text-light fw-lighter">
+        <div class="d-flex flex-row">
+            <div class="col">
+                <h1 class="text-light fw-light my-3">Add song to your playlist</h1>
+            </div>
+            <div class="row">
+                <form class="align-self-end align-items-center text-light fw-lighter d-flex my-3">
+                    <div class="col-4 ms-4">Filter by artist :</div>
+                    <select name="filter" id="filter" class="col form-select bg-dark text-light fw-lighter">
+                        <option disabled selected>select artist</option>
+                        <% for (artist of artists) { %>
+                        <option value="<%= artist.artist %>"><%= artist.artist %></option>
+                        <% } %>
+                    </select>
+                    <input type="submit" class="btn btn-outline-secondary ms-2 border-light text-light" value=">">
+                </form>
+            </div>
+        </div>
+        <form action="/playlists/<%= playlist.id %>/edit/song" class="text-light fw-lighter" method="post">
+            <table class="table table-borderless text-light fw-lighter">
                 <thead class="table-bordered">
                     <tr>
                         <th scope="col">#</th>
@@ -68,6 +84,13 @@
             document.querySelector('#fas2').setAttribute("class", "fas fa-sort-desc text-light ms-2");
         } else if (window.location.search === '?sort=artistdesc') {
             document.querySelector('#fas2').setAttribute("class", "fas fa-sort-asc text-light ms-2");
+        }
+        if (window.location.search.includes('?filter=')) {
+            let filter = window.location.search.split('filter=')[1].replaceAll('+', ' ')
+            if (document.querySelector(`[value="${filter}"]`)) {
+                document.querySelector(`option`).remove()
+                document.querySelector(`[value="${filter}"]`).setAttribute("selected", "")
+            }
         }
     </script>
 </body>
