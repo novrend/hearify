@@ -58,19 +58,8 @@ class Controller {
         })
             .then(results => {
                 if (results) {
-                    return Playlist.findOne({
-                        include : [{
-                            model: PlaylistSong,
-                            include: [{
-                                model: Song
-                            }]
-                        }],
-                        where: {
-                            id : {
-                                [Op.eq] : playlistId
-                            }
-                        }
-                    })
+                    const { sort } = req.query
+                    return Playlist.sortPlaylist(playlistId, sort, PlaylistSong, Song)
                 } else {
                     res.send('This is not your playlist')
                 }
@@ -81,6 +70,7 @@ class Controller {
                 }
             })
             .catch(err => {
+                console.log(err)
                 res.send(err)
             })
     }
@@ -137,15 +127,23 @@ class Controller {
         })
             .then(results => {
                 if (results) {
+                    const { sort } = req.query
                     playlist = results
-                    return sequelize.query(`
+                    let query = `
                     SELECT * FROM "Songs" WHERE "id" NOT IN (
                         SELECT "Song"."id" AS "Song.id"
                         FROM "PlaylistSongs" AS "PlaylistSong" 
                         LEFT OUTER JOIN "Songs" AS "Song" 
                         ON "PlaylistSong"."SongId" = "Song"."id"
                         WHERE "PlaylistSong"."PlaylistId" = ${playlistId}
-                    )`, {
+                    )`
+                    if (sort) {
+                        if (sort === 'artist') query += ` ORDER BY "Songs"."artist" ASC`
+                        else if (sort === 'artistdesc') query += ` ORDER BY "Songs"."artist" DESC`
+                        else if (sort === 'title') query += ` ORDER BY "Songs"."title" ASC`
+                        else if (sort === 'titledesc') query += ` ORDER BY "Songs"."title" DESC`
+                    }
+                    return sequelize.query(query, {
                         type: QueryTypes.SELECT
                     })
                 } else {

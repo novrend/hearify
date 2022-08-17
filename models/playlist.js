@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const { Op } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Playlist extends Model {
     /**
@@ -13,6 +14,28 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Playlist.belongsTo(models.User, {foreignKey: 'UserId'})
       Playlist.hasMany(models.PlaylistSong, {foreignKey: 'PlaylistId'})
+    }
+    static sortPlaylist(playlistId, sort, PlaylistSong, Song) {
+      let obj = {
+        include : [{
+          model: PlaylistSong,
+          include: [{
+              model: Song,
+          }]
+        }],
+        where: {
+            id : {
+                [Op.eq] : playlistId
+            }
+        }
+      }
+      if (sort) {
+        if (sort === 'artist') obj.order = [ [PlaylistSong, Song, 'artist', 'asc'] ]
+        else if (sort === 'artistdesc') obj.order = [ [PlaylistSong, Song, 'artist', 'desc'] ]
+        else if (sort === 'title') obj.order = [ [PlaylistSong, Song, 'title', 'asc'] ]
+        else if (sort === 'titledesc') obj.order = [ [PlaylistSong, Song, 'title', 'desc'] ]
+      }
+      return Playlist.findOne(obj)
     }
   }
   Playlist.init({

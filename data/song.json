@@ -4,7 +4,23 @@
         "artist" : "NIKI"
     },
     {
+        "title" : "Every Summertime",
+        "artist" : "NIKI"
+    },
+    {
+        "title" : "La La Lost You",
+        "artist" : "NIKI"
+    },
+    {
         "title" : "THE SHADE",
+        "artist" : "Rex Orange County"
+    },
+    {
+        "title" : "Pluto Project",
+        "artist" : "Rex Orange County"
+    },
+    {
+        "title" : "Sunflower",
         "artist" : "Rex Orange County"
     },
     {
@@ -12,7 +28,23 @@
         "artist" : "Harry Styles"
     },
     {
+        "title" : "Watermelon Sugar",
+        "artist" : "Harry Styles"
+    },
+    {
+        "title" : "Late Night Talking",
+        "artist" : "Harry Styles"
+    },
+    {
         "title" : "Anything You Want",
+        "artist" : "Reality Club"
+    },
+    {
+        "title" : "Alexandra",
+        "artist" : "Reality Club"
+    },
+    {
+        "title" : "Telenovia",
         "artist" : "Reality Club"
     },
     {
@@ -20,15 +52,43 @@
         "artist" : "Bruno Mars"
     },
     {
+        "title" : "Leave The Door Open",
+        "artist" : "Bruno Mars"
+    },
+    {
+        "title" : "Smokin Out The Window",
+        "artist" : "Bruno Mars"
+    },
+    {
         "title" : "Ghost",
         "artist" : "Justin Bieber"
     },
     {
+        "title" : "Peaches",
+        "artist" : "Justin Bieber"
+    },
+    {
+        "title" : "STAY",
+        "artist" : "Justin Bieber"
+    },
+    {
         "title" : "I Ain't Worried",
-        "artist" : "One Republic"
+        "artist" : "OneRepublic"
+    },
+    {
+        "title" : "Counting Stars",
+        "artist" : "OneRepublic"
+    },
+    {
+        "title" : "Sunshine",
+        "artist" : "OneRepublic"
     },
     {
         "title" : "thank u, next",
+        "artist" : "Ariana Grande"
+    },
+    {
+        "title" : "boyfriend",
         "artist" : "Ariana Grande"
     },
     {
@@ -36,11 +96,35 @@
         "artist" : "Dua Lipa"
     },
     {
+        "title" : "IDGAF",
+        "artist" : "Dua Lipa"
+    },
+    {
+        "title" : "Break My Heart",
+        "artist" : "Dua Lipa"
+    },
+    {
         "title" : "Thinking out Loud",
         "artist" : "Ed Sheeran"
     },
     {
+        "title" : "Photograph",
+        "artist" : "Ed Sheeran"
+    },
+    {
+        "title" : "Happier",
+        "artist" : "Ed Sheeran"
+    },
+    {
         "title" : "Do I Wanna Know?",
+        "artist" : "Arctic Monkeys"
+    },
+    {
+        "title" : "505",
+        "artist" : "Arctic Monkeys"
+    },
+    {
+        "title" : "R U Mine?",
         "artist" : "Arctic Monkeys"
     },
     {
@@ -52,7 +136,23 @@
         "artist" : "Billie Eilish"
     },
     {
+        "title" : "watch",
+        "artist" : "Billie Eilish"
+    },
+    {
+        "title" : "idontwannabeyouanymore",
+        "artist" : "Billie Eilish"
+    },
+    {
         "title" : "Lover",
+        "artist" : "Taylor Swift"
+    },
+    {
+        "title" : "Black Space",
+        "artist" : "Taylor Swift"
+    },
+    {
+        "title" : "Shake It Off",
         "artist" : "Taylor Swift"
     },
     {
@@ -60,7 +160,23 @@
         "artist" : "Radiohead"
     },
     {
+        "title" : "Creep",
+        "artist" : "Radiohead"
+    },
+    {
+        "title" : "Karma Police",
+        "artist" : "Radiohead"
+    },
+    {
         "title" : "Somebody To Love",
+        "artist" : "Queen"
+    },
+    {
+        "title" : "Good Old-Fashioned Lover Boy",
+        "artist" : "Queen"
+    },
+    {
+        "title" : "Love Of My Life",
         "artist" : "Queen"
     },
     {
@@ -68,7 +184,23 @@
         "artist" : "John Mayer"
     },
     {
+        "title" : "You're Gonna Live Forever in Me",
+        "artist" : "John Mayer"
+    },
+    {
+        "title" : "Slow Dancing in a Burning Room",
+        "artist" : "John Mayer"
+    },
+    {
         "title" : "Japanese Denim",
+        "artist" : "Daniel Caesar"
+    },
+    {
+        "title" : "Best Part",
+        "artist" : "Daniel Caesar"
+    },
+    {
+        "title" : "Get You",
         "artist" : "Daniel Caesar"
     },
     {
