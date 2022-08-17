@@ -28,6 +28,72 @@ class Controller {
                 res.send(err)
             })
     }
+    static addSongPage(req, res) {
+        res.render('addSong')
+    }
+    static addSong(req, res) {
+        const { title, artist } = req.body
+        Song.create({
+            title, artist
+        })
+            .then(results => {
+                res.redirect('/songs')
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+    static editSongPage(req, res) {
+        const { songId } = req.params
+        Song.findOne({
+            where: {
+                id : {
+                    [Op.eq] : songId
+                }
+            }
+        })
+            .then(results => {
+                res.render('editSong', { song: results })
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+    static editSong(req, res) {
+        const { songId } = req.params
+        const { title, artist } = req.body
+        Song.update({
+            title, artist
+        }, {
+            where : {
+                id : {
+                    [Op.eq] : songId
+                }
+            }
+        })
+            .then(results => {
+                res.redirect('/songs')
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+    static deleteSong(req, res) {
+        const { songId } = req.params
+        Song.destroy({
+            where: {
+                id : {
+                    [Op.eq] : songId
+                }
+            }
+        })
+            .then(results => {
+                res.redirect('/songs')
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
 }
 
 module.exports = Controller

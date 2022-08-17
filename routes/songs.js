@@ -1,12 +1,12 @@
 const router = require('express').Router()
 const Song = require('../controllers/song');
-const { isLogged, isLoggedIn } = require('../middlewares/auth');
+const { isAdmin, isLoggedIn } = require('../middlewares/auth');
 
-router.get('/', Song.songsPage)
-// router.get('/add')
-// router.post('/add')
-// router.get('/:songId/edit')
-// router.post('/:songId/edit')
-// router.get('/:songId/delete')
+router.get('/', isLoggedIn, Song.songsPage)
+router.get('/add', isLoggedIn, isAdmin, Song.addSongPage)
+router.post('/add', isLoggedIn, isAdmin, Song.addSong)
+router.get('/:songId/edit', Song.editSongPage)
+router.post('/:songId/edit', Song.editSong)
+router.get('/:songId/delete', Song.deleteSong)
 
 module.exports = router

@@ -45,7 +45,8 @@
                         </td>
                         <% if (user.role === "admin") { %>
                         <td>
-                            <a href="/song/<%= song.id %>/delete" class="btn btn-outline-danger text-light fw-lighter">Delete Song</a>
+                            <a href="/songs/<%= song.id %>/edit" class="btn btn-outline-secondary text-light fw-lighter">Edit</a>
+                            <a href="/songs/<%= song.id %>/delete" class="btn btn-outline-danger text-light fw-lighter">Delete</a>
                         </td>
                         <% } %>
                     </tr>
