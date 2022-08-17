@@ -9,20 +9,38 @@ let spotifyApi = new SpotifyWebApi({
 
 class Controller {
     static songsPage(req, res) {
-        // const { user }  = req.session
-        const user = {role : 'admin'}
-        const { sort } = req.query
+        const { user }  = req.session
+        const { sort, filter } = req.query
         let ress
-        Song.sortSongs(sort, Song)
+        Song.sortSongs(sort, filter, Song)
             .then(results => {
-                ress = results
-                return spotifyApi.clientCredentialsGrant()
+                if (results) {
+                    ress = results
+                    return spotifyApi.clientCredentialsGrant()
+                } else {
+                    res.send('Empty data')
+                }
             })
             .then(data => {
-                return Playlist.spotifyApi2(ress, data)
+                if (data) {
+                    return Playlist.spotifyApi2(ress, data)
+                } else {
+                    res.send('Empty data')
+                }
             })
             .then(results => {
-                res.render('songs', {songs: ress, user})
+                if (results) {
+                    return Song.findAll({ attributes: ['artist'], group: "artist"})
+                } else {
+                    res.send('Empty data')
+                }
+            })
+            .then(results => {
+                if (results) {
+                    res.render('songs', {songs: ress, user, artists: results})
+                } else {
+                    res.send('Empty data')
+                }
             })
             .catch(err => {
                 res.send(err)

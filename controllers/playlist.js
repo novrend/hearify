@@ -44,8 +44,7 @@ class Controller {
             })
     }
     static playlistDetailPage(req, res) {
-        // const { id } = req.session.user
-        const id = 1
+        const { id } = req.session.user
         const { playlistId } = req.params
         let ress
         Playlist.findOne({
@@ -89,24 +88,12 @@ class Controller {
             })
             .then(results => {
                 if (results) {
-                    return Playlist.findOne({
-                        include : [{
-                            model: PlaylistSong,
-                            include: [{
-                                model: Song,
-                                attributes: ['artist']
-                            }],
-                            group: ["Song.artist"]
-                        }],
-                        where : {
-                            id : {
-                                [Op.eq] : playlistId
-                            }
-                        }
-                    })
-                    return Song.findAll({
-                        attributes: ['artist'],
-                        group: 'artist'
+                    return sequelize.query(`
+                    SELECT s.artist FROM "Playlists" p
+                    JOIN "PlaylistSongs" ps ON p.id = ps."PlaylistId" 
+                    JOIN "Songs" s ON ps."SongId" = s.id WHERE p.id = ${playlistId}
+                    GROUP BY s.artist`, {
+                        type: QueryTypes.SELECT
                     })
                 } else {
                     res.send('Empty data')
@@ -114,14 +101,12 @@ class Controller {
             })
             .then(results => {
                 if (results) {
-                    res.send(results)
-                    // res.render('playlistDetail', {playlist: ress, artists: results})
+                    res.render('playlistDetail', {playlist: ress, artists: results})
                 } else {
                     res.send('Empty data')
                 }
             })
             .catch(err => {
-                console.log(err)
                 res.send(err)
             })
     }
@@ -222,7 +207,7 @@ class Controller {
         })
             .then(results => {
                 if (results) {
-                    const { sort } = req.query
+                    const { sort, filter } = req.query
                     playlist = results
                     let query = `
                     SELECT * FROM "Songs" WHERE "id" NOT IN (
@@ -232,6 +217,9 @@ class Controller {
                         ON "PlaylistSong"."SongId" = "Song"."id"
                         WHERE "PlaylistSong"."PlaylistId" = ${playlistId}
                     )`
+                    if (filter) {
+                        query += ` AND "Songs"."artist" = '${filter}'`
+                    }
                     if (sort) {
                         if (sort === 'artist') query += ` ORDER BY "Songs"."artist" ASC`
                         else if (sort === 'artistdesc') query += ` ORDER BY "Songs"."artist" DESC`
@@ -246,16 +234,39 @@ class Controller {
                 }
             })
             .then(results => {
-                ress = results
-                return spotifyApi.clientCredentialsGrant()
+                if (results) {
+                    ress = results
+                    return spotifyApi.clientCredentialsGrant()
+                } else {
+                    res.send('Empty Data')
+                }
             })
             .then(data => {
-                return Playlist.spotifyApi2(ress, data)
+                if (data) {
+                    return Playlist.spotifyApi2(ress, data)
+                } else {
+                    res.send('Empty Data')
+                }
+            })
+            .then(results => {
+                if (results) {
+                    return sequelize.query(`
+                        SELECT s.artist FROM "Playlists" p
+                        JOIN "PlaylistSongs" ps ON p.id = ps."PlaylistId" 
+                        JOIN "Songs" s ON ps."SongId" = s.id WHERE p.id != ${playlistId}
+                        GROUP BY s.artist`, {
+                            type: QueryTypes.SELECT
+                    })
+                } else {
+                    res.send('Empty Data')
+                }
             })
             .then(results => {
                 if (results) {
                     playlist.Songs = ress
-                    res.render('playlistSong', { playlist: playlist })
+                    res.render('playlistSong', { playlist: playlist, artists: results })
+                } else {
+                    res.send('Empty Data')
                 }
             })
             .catch(err => {

@@ -23,10 +23,10 @@
             <div class="row">
                 <form class="align-self-end align-items-center text-light fw-lighter d-flex">
                     <div class="col-4 ms-4">Filter by artist :</div>
-                    <select name="filter" class="col form-select bg-dark text-light fw-lighter">
-                        <option>select artist</option>
+                    <select name="filter" id="filter" class="col form-select bg-dark text-light fw-lighter">
+                        <option disabled selected>select artist</option>
                         <% for (artist of artists) { %>
-                        <option><%= artist.artist %></option>
+                        <option value="<%= artist.artist %>"><%= artist.artist %></option>
                         <% } %>
                     </select>
                     <input type="submit" class="btn btn-outline-secondary ms-2 border-light text-light" value=">">
@@ -78,6 +78,13 @@
             document.querySelector('#fas2').setAttribute("class", "fas fa-sort-desc text-light ms-2");
         } else if (window.location.search === '?sort=artistdesc') {
             document.querySelector('#fas2').setAttribute("class", "fas fa-sort-asc text-light ms-2");
+        }
+        if (window.location.search.includes('?filter=')) {
+            let filter = window.location.search.split('filter=')[1].replaceAll('+', ' ')
+            if (document.querySelector(`[value="${filter}"]`)) {
+                document.querySelector(`option`).remove()
+                document.querySelector(`[value="${filter}"]`).setAttribute("selected", "")
+            }
         }
     </script>
 </body>
