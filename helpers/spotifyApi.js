@@ -50,19 +50,19 @@ var spotifyApi = new SpotifyWebApi({
 //     console.log('Something went wrong when retrieving an access token', err);
 //   }
 // );
-spotifyApi.setAccessToken('BQDMi8mgG7JDI9y37XpjZaAa2yuCeXb_-RenD-vRWOVFkUZ7XYydAMz1ihS4sXRjEVm12eoqHi-JI61aUQCgcj4Wf8P6NaQrB1YOupRDqgXkngj2mgp2ro3jgmc5jkHH6DTxqj7ihxglExSMRVIdNuFm7XmDIoubXjR9OxpBkQRE4PrOD6J62J3xggU--VW7emPtzNf4UjzwHxJAYGn1wQ');
-spotifyApi.getAlbum('1rvWKJpQw9JBleSPrlaGhD')
+spotifyApi.setAccessToken('BQDRSHue2YUdbDpfXVC_kuR90dLo1HSLGwPdiYcKubHNyofjZL2vpSQ6iQSFgAhuZVbdznZgjlrQDaI7LVH5WANlTcshD1aCBgGvo3WTvGJgYwvUFYw');
+// spotifyApi.getAlbum('1rvWKJpQw9JBleSPrlaGhD')
+//   .then(function(data) {
+//     console.log('Album information', data.body);
+//   }, function(err) {
+//     console.error(err);
+//   });
+  spotifyApi.searchTracks(`track:Youre Gonna Live Forever in Me John Mayer`)
   .then(function(data) {
-    console.log('Album information', data.body);
+    console.log( data.body)
   }, function(err) {
-    console.error(err);
+    console.log('Something went wrong!', err);
   });
-  // spotifyApi.searchTracks('track:Ghost artist:Justin Bieber')
-  // .then(function(data) {
-  //   console.log( data.body.tracks.items)
-  // }, function(err) {
-  //   console.log('Something went wrong!', err);
-  // });
   // spotifyApi.getAudioFeaturesForTrack('3Qm86XLflmIXVm1wcwkgDK')
   // .then(function(data) {
   //   console.log(data.body);
