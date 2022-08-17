@@ -27,16 +27,30 @@
                     <th scope="col">#</th>
                     <th scope="col">Title<a id="sort1" href="?sort=title"><i id="fas1" class="fas fa-sort-alpha-asc text-light ms-2"></i></a></th>
                     <th scope="col">Artist<a id="sort2" href="?sort=artist"><i id="fas2" class="fas fa-sort text-light ms-2"></i></a></th>
+                    <th scope="col">Preview</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
-            <tbody class="table-group-divider">
+            <tbody class="table-group-divider align-middle">
                 <% let i = 1; for (song of playlist.PlaylistSongs) { %>
                 <tr>
                     <td><%= i %></td>
-                    <td><%= song.Song.title %></td>
+                    <td><img src="<%= song.Song.album %>" width="64" class="me-2"><%= song.Song.title %></td>
                     <td><%= song.Song.artist %></td>
-                    <td><a href="/playlists/<%= playlist.id %>/delete/<%= song.Song.id %>" class="btn btn-outline-danger">Delete</a></td>
+                    <td>
+                        <% if (song.Song.link) { %>
+                        <audio controls>
+                            <source src="<%= song.Song.link %>" type="audio/ogg">
+                            <source src="<%= song.Song.link %>" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <% } else { %>
+                            Preview audio not available
+                        <% } %>
+                    </td>
+                    <td>
+                        <a href="/playlists/<%= playlist.id %>/delete/<%= song.Song.id %>" class="btn btn-outline-danger">Delete</a>
+                    </td>
                 </tr>
                 <% i++; } %>
             </tbody>

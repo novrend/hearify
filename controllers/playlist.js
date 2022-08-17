@@ -1,6 +1,12 @@
 const { Song, Playlist, PlaylistSong, sequelize } = require('../models')
 const { Op } = require('sequelize');
 const { QueryTypes } = require('sequelize');
+const SpotifyWebApi = require('spotify-web-api-node');
+let spotifyApi = new SpotifyWebApi({
+    clientId: '54ad5ca56d494d1ba439c7a366e3f09a',
+    clientSecret: 'f916b7c948fe4a48a71b39d2853c8562',
+    redirectUri: 'http://www.michaelthelin.se/test-callback'
+});
 
 class Controller {
     static playlistsPage(req, res) {
@@ -38,8 +44,10 @@ class Controller {
             })
     }
     static playlistDetailPage(req, res) {
-        const { id } = req.session.user
+        // const { id } = req.session.user
+        const id = 1
         const { playlistId } = req.params
+        let ress
         Playlist.findOne({
             where : {
                 [Op.and]: [
@@ -65,12 +73,18 @@ class Controller {
                 }
             })
             .then(results => {
+                ress = results
+                return spotifyApi.clientCredentialsGrant()
+            })
+            .then(data => {
+                return Playlist.spotifyApi(ress.PlaylistSongs, data)
+            })
+            .then(results => {
                 if (results) {
-                    res.render('playlistDetail', {playlist: results})
+                    res.render('playlistDetail', {playlist: ress})
                 }
             })
             .catch(err => {
-                console.log(err)
                 res.send(err)
             })
     }
@@ -106,9 +120,11 @@ class Controller {
             })
     }
     static editPlaylistSongPage(req, res) {
-        const { id } = req.session.user
+        // const { id } = req.session.user
+        const id = 1
         const { playlistId } = req.params
         let playlist = {}
+        let ress
         Playlist.findOne({
             where : {
                 [Op.and]: [
@@ -151,8 +167,15 @@ class Controller {
                 }
             })
             .then(results => {
+                ress = results
+                return spotifyApi.clientCredentialsGrant()
+            })
+            .then(data => {
+                return Playlist.spotifyApi2(ress, data)
+            })
+            .then(results => {
                 if (results) {
-                    playlist.Songs = results
+                    playlist.Songs = ress
                     res.render('playlistSong', { playlist: playlist })
                 }
             })
@@ -181,12 +204,22 @@ class Controller {
         })
             .then(results => {
                 if (results) {
-                    return PlaylistSong.create({
+                    return PlaylistSong.findOne({
                         PlaylistId: playlistId,
                         SongId: songId
                     })
                 } else {
                     res.send('This is not your playlist')
+                }
+            })
+            .then(results => {
+                if (results) {
+                    res.send('You already added this song')
+                } else {
+                    return PlaylistSong.create({
+                        PlaylistId: playlistId,
+                        SongId: songId
+                    })
                 }
             })
             .then(results => {
