@@ -44,7 +44,8 @@ class Controller {
             })
     }
     static playlistDetailPage(req, res) {
-        const { id } = req.session.user
+        // const { id } = req.session.user
+        const id = 1
         const { playlistId } = req.params
         let ress
         Playlist.findOne({
@@ -65,25 +66,62 @@ class Controller {
         })
             .then(results => {
                 if (results) {
-                    const { sort } = req.query
-                    return Playlist.sortPlaylist(playlistId, sort, PlaylistSong, Song)
+                    const { sort, filter } = req.query
+                    return Playlist.sortPlaylist(playlistId, sort, filter, PlaylistSong, Song)
                 } else {
                     res.send('This is not your playlist')
                 }
             })
             .then(results => {
-                ress = results
-                return spotifyApi.clientCredentialsGrant()
+                if (results) {
+                    ress = results
+                    return spotifyApi.clientCredentialsGrant()
+                } else {
+                    res.send('Empty data')
+                }
             })
             .then(data => {
-                return Playlist.spotifyApi(ress.PlaylistSongs, data)
+                if (data) {
+                    return Playlist.spotifyApi(ress.PlaylistSongs, data)
+                } else {
+                    res.send('Empty data')
+                }
             })
             .then(results => {
                 if (results) {
-                    res.render('playlistDetail', {playlist: ress})
+                    return Playlist.findOne({
+                        include : [{
+                            model: PlaylistSong,
+                            include: [{
+                                model: Song,
+                                attributes: ['artist']
+                            }],
+                            group: ["Song.artist"]
+                        }],
+                        where : {
+                            id : {
+                                [Op.eq] : playlistId
+                            }
+                        }
+                    })
+                    return Song.findAll({
+                        attributes: ['artist'],
+                        group: 'artist'
+                    })
+                } else {
+                    res.send('Empty data')
+                }
+            })
+            .then(results => {
+                if (results) {
+                    res.send(results)
+                    // res.render('playlistDetail', {playlist: ress, artists: results})
+                } else {
+                    res.send('Empty data')
                 }
             })
             .catch(err => {
+                console.log(err)
                 res.send(err)
             })
     }

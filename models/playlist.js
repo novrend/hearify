@@ -59,12 +59,12 @@ module.exports = (sequelize, DataTypes) => {
       };
       return getSpotifyDetail();
     }
-    static sortPlaylist(playlistId, sort, PlaylistSong, Song) {
+    static sortPlaylist(playlistId, sort, filter, PlaylistSong, Song) {
       let obj = {
         include : [{
           model: PlaylistSong,
           include: [{
-              model: Song,
+              model: Song
           }]
         }],
         where: {
@@ -73,6 +73,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
       }
+      if (filter) {
+        obj.include[0].include[0].where = {
+          artist : {
+            [Op.eq] : filter
+          }
+        }
+      }
+
       if (sort) {
         if (sort === 'artist') obj.order = [ [PlaylistSong, Song, 'artist', 'asc'] ]
         else if (sort === 'artistdesc') obj.order = [ [PlaylistSong, Song, 'artist', 'desc'] ]

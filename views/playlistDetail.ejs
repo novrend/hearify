@@ -10,15 +10,27 @@
 </head>
 <body style="background-color: #121212;">
     <div class="container p-5">
-        <div class="d-flex">
+        <div class="d-flex flex-row">
             <img src="<%= playlist.thumbnailUrl %>" class="rounded me-4" width="200">
-            <div>
+            <div class="col">
                 <h1 class="text-light"><%= playlist.name %></h1>
                 <div class="d-flex">
                     <h3><a href="/playlists/<%= playlist.id %>/edit" class="btn btn-outline-secondary m-2">Edit playlist</a></h3>
                     <h3><a href="/playlists/<%= playlist.id %>/edit/song" class="btn btn-outline-secondary m-2">Add song</a></h3>
                 </div>
                 <h3><a href="/playlists" class="btn btn-outline-secondary m-2">Back to all playlist list</a></h3>
+            </div>
+            <div class="row">
+                <form class="align-self-end align-items-center text-light fw-lighter d-flex">
+                    <div class="col-4 ms-4">Filter by artist :</div>
+                    <select name="filter" class="col form-select bg-dark text-light fw-lighter">
+                        <option>select artist</option>
+                        <% for (artist of artists) { %>
+                        <option><%= artist.artist %></option>
+                        <% } %>
+                    </select>
+                    <input type="submit" class="btn btn-outline-secondary ms-2 border-light text-light" value=">">
+                </form>
             </div>
         </div>
         <table class="table table-borderless text-light fw-lighter my-4">
