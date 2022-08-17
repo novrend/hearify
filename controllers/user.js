@@ -4,8 +4,20 @@ const bcrypt = require('bcryptjs');
 
 class Controller {
     static home(req, res) {
-        const { user } = req.session
-        res.render('home', { user })
+        const { id } = req.session.user
+        User.findOne({
+            where: {
+                id : {
+                    [Op.eq] : id
+                }
+            }
+        })
+            .then(results => {
+                res.render('home', { user: results })
+            })
+            .catch(err => {
+                res.send(err)
+            })
     }
     static loginPage(req, res) {
         const { err } = req.query

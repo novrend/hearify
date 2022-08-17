@@ -6,52 +6,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
-    <title>Playlist Detail</title>
+    <title>Songs</title>
 </head>
 <body style="background-color: #121212;">
-    <div class="container p-5">
+    <div class="container p-5 text-light fw-lighter">
         <div class="d-flex">
-            <img src="<%= playlist.thumbnailUrl %>" class="rounded me-4" width="200">
-            <div>
-                <h1 class="text-light"><%= playlist.name %></h1>
-                <div class="d-flex">
-                    <h3><a href="/playlists/<%= playlist.id %>/edit" class="btn btn-outline-secondary m-2">Edit playlist</a></h3>
-                    <h3><a href="/playlists/<%= playlist.id %>/edit/song" class="btn btn-outline-secondary m-2">Add song</a></h3>
-                </div>
-                <h3><a href="/playlists" class="btn btn-outline-secondary m-2">Back to all playlist list</a></h3>
-            </div>
+            <h1>List Songs</h1>
+            <h3><a href="/songs/add" class="btn btn-outline-secondary m-2 ms-4">Add new song</a></h3>
         </div>
-        <table class="table table-borderless text-light fw-lighter my-4">
+        <table class="table table-borderless my-4 text-light fw-lighter">
             <thead class="table-bordered">
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Title<a id="sort1" href="?sort=title"><i id="fas1" class="fas fa-sort-alpha-asc text-light ms-2"></i></a></th>
                     <th scope="col">Artist<a id="sort2" href="?sort=artist"><i id="fas2" class="fas fa-sort text-light ms-2"></i></a></th>
                     <th scope="col">Preview</th>
+                    <% if (user.role === "admin") { %>
                     <th scope="col">Action</th>
+                    <% } %>
                 </tr>
             </thead>
             <tbody class="table-group-divider align-middle">
-                <% let i = 1; for (song of playlist.PlaylistSongs) { %>
-                <tr>
-                    <td><%= i %></td>
-                    <td><img src="<%= song.Song.album %>" width="64" class="me-2"><%= song.Song.title %></td>
-                    <td><%= song.Song.artist %></td>
-                    <td>
-                        <% if (song.Song.link) { %>
-                        <audio controls>
-                            <source src="<%= song.Song.link %>" type="audio/ogg">
-                            <source src="<%= song.Song.link %>" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
-                        <% } else { %>
-                            Preview audio not available
+                <% let i = 1; for (song of songs) { %>
+                    <tr>
+                        <td><%= i %></td>
+                        <td><img src="<%= song.album %>" width="64" class="me-2"><%= song.title %></td>
+                        <td><%= song.artist %></td>
+                        <td>
+                            <% if (song.link) { %>
+                            <audio controls>
+                                <source src="<%= song.link %>" type="audio/ogg">
+                                <source src="<%= song.link %>" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <% } else { %>
+                                Preview audio not available
+                            <% } %>
+                        </td>
+                        <% if (user.role === "admin") { %>
+                        <td>
+                            <a href="/song/<%= song.id %>/delete" class="btn btn-outline-danger text-light fw-lighter">Delete Song</a>
+                        </td>
                         <% } %>
-                    </td>
-                    <td>
-                        <a href="/playlists/<%= playlist.id %>/delete/<%= song.Song.id %>" class="btn btn-outline-danger">Delete</a>
-                    </td>
-                </tr>
+                    </tr>
                 <% i++; } %>
             </tbody>
         </table>

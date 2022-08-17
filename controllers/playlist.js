@@ -44,8 +44,7 @@ class Controller {
             })
     }
     static playlistDetailPage(req, res) {
-        // const { id } = req.session.user
-        const id = 1
+        const { id } = req.session.user
         const { playlistId } = req.params
         let ress
         Playlist.findOne({
@@ -91,7 +90,6 @@ class Controller {
     static editPlaylistPage(req, res) {
         const { id } = req.session.user
         const { playlistId } = req.params
-        const { name, thumbnailUrl } = req.body
         Playlist.findOne({
             where : {
                 [Op.and]: [
@@ -119,9 +117,52 @@ class Controller {
                 res.send(err)
             })
     }
+    static editPlaylist(req, res) {
+        const { id } = req.session.user
+        const { playlistId } = req.params
+        const { name, thumbnailUrl } = req.body
+        Playlist.findOne({
+            where : {
+                [Op.and]: [
+                    {
+                        UserId : {
+                            [Op.eq] : id
+                        },
+                    },
+                    {
+                        id : {
+                            [Op.eq] : playlistId
+                        }
+                    }
+                ]
+            }
+        })
+            .then(results => {
+                if (results) {
+                    return Playlist.update({
+                        name, thumbnailUrl
+                    }, {
+                        where: {
+                            id : {
+                                [Op.eq] : playlistId
+                            }
+                        }
+                    })
+                } else {
+                    res.send('This is not your playlist')
+                }
+            })
+            .then(results => {
+                if (results) {
+                    res.redirect(`/playlists/${playlistId}`)
+                }
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
     static editPlaylistSongPage(req, res) {
-        // const { id } = req.session.user
-        const id = 1
+        const { id } = req.session.user
         const { playlistId } = req.params
         let playlist = {}
         let ress
@@ -287,7 +328,6 @@ class Controller {
                 res.render('playlists', { playlists: results })
             })
             .catch(err => {
-                console.log(err)
                 res.send(err)
             })
     }

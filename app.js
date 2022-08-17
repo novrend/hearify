@@ -16,6 +16,7 @@ app.use(session({
         sameSite: true
     }
 }))
+app.use(express.static('public'))
 app.use('/', router)
 
 app.listen(PORT, () => {

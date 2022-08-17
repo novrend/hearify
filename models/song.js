@@ -13,6 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Song.hasMany(models.PlaylistSong, { foreignKey: 'SongId', as: 'PlaylistSong'})
     }
+    static sortSongs(sort, Song) {
+      let obj = {}
+      if (sort) {
+        if (sort === 'artist') obj.order = [ ['artist', 'asc'] ]
+        else if (sort === 'artistdesc') obj.order = [ ['artist', 'desc'] ]
+        else if (sort === 'title') obj.order = [ ['title', 'asc'] ]
+        else if (sort === 'titledesc') obj.order = [ ['title', 'desc'] ]
+      }
+      return Song.findAll(obj)
+    }
   }
   Song.init({
     title: DataTypes.STRING,

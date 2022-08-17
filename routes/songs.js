@@ -2,7 +2,7 @@ const router = require('express').Router()
 const Song = require('../controllers/song');
 const { isLogged, isLoggedIn } = require('../middlewares/auth');
 
-// router.get('/')
+router.get('/', Song.songsPage)
 // router.get('/add')
 // router.post('/add')
 // router.get('/:songId/edit')
