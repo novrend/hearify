@@ -26,10 +26,12 @@ module.exports = (sequelize, DataTypes) => {
     }
     static sortPlaylist(playlistId, sort, filter) {
       let obj = {
-        include : {
+        include : [{
           model: sequelize.models.PlaylistSong,
-          include : 'Song'
-        },
+          include : [{
+            model: sequelize.models.Song
+          }]
+        }],
         where: {
             id : {
                 [Op.eq] : playlistId

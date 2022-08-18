@@ -305,8 +305,10 @@ class Controller {
             .then(results => {
                 if (results) {
                     return PlaylistSong.findOne({
-                        PlaylistId: playlistId,
-                        SongId: songId
+                        where: {
+                            PlaylistId: playlistId,
+                            SongId: songId
+                        }
                     })
                 } else {
                     res.send('Playlist not found')
@@ -314,6 +316,8 @@ class Controller {
             })
             .then(results => {
                 if (results) {
+                    console.log(results)
+                    console.log(playlistId, songId)
                     res.send('You already added this song')
                 } else {
                     return PlaylistSong.create({
