@@ -45,10 +45,10 @@ module.exports = (sequelize, DataTypes) => {
       }
 
       if (sort) {
-        if (sort === 'artist') obj.order = [ [PlaylistSong, Song, 'artist', 'asc'] ]
-        else if (sort === 'artistdesc') obj.order = [ [PlaylistSong, Song, 'artist', 'desc'] ]
-        else if (sort === 'title') obj.order = [ [PlaylistSong, Song, 'title', 'asc'] ]
-        else if (sort === 'titledesc') obj.order = [ [PlaylistSong, Song, 'title', 'desc'] ]
+        if (sort === 'artist') obj.order = [ [sequelize.models.PlaylistSong, sequelize.models.Song, 'artist', 'asc'] ]
+        else if (sort === 'artistdesc') obj.order = [ [sequelize.models.PlaylistSong, sequelize.models.Song, 'artist', 'desc'] ]
+        else if (sort === 'title') obj.order = [ [sequelize.models.PlaylistSong, sequelize.models.Song, 'title', 'asc'] ]
+        else if (sort === 'titledesc') obj.order = [ [sequelize.models.PlaylistSong, sequelize.models.Song, 'title', 'desc'] ]
       }
       return Playlist.findOne(obj)
     }
