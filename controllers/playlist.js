@@ -1,12 +1,6 @@
 const { Song, Playlist, PlaylistSong, sequelize } = require('../models')
 const { Op } = require('sequelize');
 const { QueryTypes } = require('sequelize');
-const SpotifyWebApi = require('spotify-web-api-node');
-let spotifyApi = new SpotifyWebApi({
-    clientId: '54ad5ca56d494d1ba439c7a366e3f09a',
-    clientSecret: 'f916b7c948fe4a48a71b39d2853c8562',
-    redirectUri: 'http://www.michaelthelin.se/test-callback'
-});
 
 class Controller {
     static playlistsPage(req, res) {
@@ -75,34 +69,31 @@ class Controller {
             .then(results => {
                 if (results) {
                     const { sort, filter } = req.query
-                    return Playlist.sortPlaylist(playlistId, sort, filter, PlaylistSong, Song)
+                    return Playlist.sortPlaylist(playlistId, sort, filter)
                 } else {
                     res.send('Playlist not foud')
                 }
             })
-            .then(results => {
-                if (results) {
-                    ress = results
-                    return spotifyApi.clientCredentialsGrant()
-                } else {
-                    res.send('Empty data')
-                }
-            })
             .then(data => {
                 if (data) {
-                    return Playlist.spotifyApi(ress.PlaylistSongs, data)
+                    ress = data
+                    return Playlist.spotifyApi(ress.PlaylistSongs)
                 } else {
                     res.send('Empty data')
                 }
             })
             .then(results => {
                 if (results) {
+                    results.forEach((el,i) => {
+                        ress.PlaylistSongs[i].Song.link = el.body.tracks.items[0].preview_url
+                        ress.PlaylistSongs[i].Song.album = el.body.tracks.items[0].album.images[1].url
+                    })
                     return sequelize.query(`
-                    SELECT s.artist FROM "Playlists" p
-                    JOIN "PlaylistSongs" ps ON p.id = ps."PlaylistId" 
-                    JOIN "Songs" s ON ps."SongId" = s.id WHERE p.id = ${playlistId}
-                    GROUP BY s.artist`, {
-                        type: QueryTypes.SELECT
+                        SELECT s.artist FROM "Playlists" p
+                        JOIN "PlaylistSongs" ps ON p.id = ps."PlaylistId" 
+                        JOIN "Songs" s ON ps."SongId" = s.id WHERE p.id = ${playlistId}
+                        GROUP BY s.artist`, {
+                            type: QueryTypes.SELECT
                     })
                 } else {
                     res.send('Empty data')
@@ -230,12 +221,12 @@ class Controller {
                     const { sort, filter } = req.query
                     playlist = results
                     let query = `
-                    SELECT * FROM "Songs" WHERE "id" NOT IN (
-                        SELECT "Song"."id" AS "Song.id"
-                        FROM "PlaylistSongs" AS "PlaylistSong" 
-                        LEFT OUTER JOIN "Songs" AS "Song" 
-                        ON "PlaylistSong"."SongId" = "Song"."id"
-                        WHERE "PlaylistSong"."PlaylistId" = ${playlistId}
+                        SELECT * FROM "Songs" WHERE "id" NOT IN (
+                            SELECT "Song"."id" AS "Song.id"
+                            FROM "PlaylistSongs" AS "PlaylistSong" 
+                            LEFT OUTER JOIN "Songs" AS "Song" 
+                            ON "PlaylistSong"."SongId" = "Song"."id"
+                            WHERE "PlaylistSong"."PlaylistId" = ${playlistId}
                     )`
                     if (filter) {
                         query += ` AND "Songs"."artist" = '${filter}'`
@@ -253,30 +244,27 @@ class Controller {
                     res.send('This is not your playlist')
                 }
             })
-            .then(results => {
-                if (results) {
-                    ress = results
-                    return spotifyApi.clientCredentialsGrant()
-                } else {
-                    res.send('Empty Data')
-                }
-            })
             .then(data => {
                 if (data) {
-                    return Playlist.spotifyApi2(ress, data)
+                    ress = data
+                    return Playlist.spotifyApi(ress)
                 } else {
                     res.send('Empty Data')
                 }
             })
             .then(results => {
                 if (results) {
+                    results.forEach((el,i) => {
+                        ress[i].link = el.body.tracks.items[0].preview_url
+                        ress[i].album = el.body.tracks.items[0].album.images[1].url
+                    })
                     return sequelize.query(`
-                    SELECT artist FROM "Songs" WHERE artist NOT IN (
-                        SELECT s.artist FROM "Playlists" p
-                        JOIN "PlaylistSongs" ps ON p.id = ps."PlaylistId" 
-                        JOIN "Songs" s ON ps."SongId" = s.id WHERE p.id = 8)
-                        GROUP BY artist`, {
-                            type: QueryTypes.SELECT
+                        SELECT artist FROM "Songs" WHERE artist NOT IN (
+                            SELECT s.artist FROM "Playlists" p
+                            JOIN "PlaylistSongs" ps ON p.id = ps."PlaylistId" 
+                            JOIN "Songs" s ON ps."SongId" = s.id WHERE p.id = 8)
+                            GROUP BY artist`, {
+                                type: QueryTypes.SELECT
                     })
                 } else {
                     res.send('Empty Data')
@@ -320,7 +308,7 @@ class Controller {
                         SongId: songId
                     })
                 } else {
-                    res.send('This is not your playlist')
+                    res.send('Playlist not found')
                 }
             })
             .then(results => {

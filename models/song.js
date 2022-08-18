@@ -3,12 +3,8 @@ const {
   Model
 } = require('sequelize');
 const { Op } = require('sequelize');
-const SpotifyWebApi = require('spotify-web-api-node');
-let spotifyApi = new SpotifyWebApi({
-    clientId: '54ad5ca56d494d1ba439c7a366e3f09a',
-    clientSecret: 'f916b7c948fe4a48a71b39d2853c8562',
-    redirectUri: 'http://www.michaelthelin.se/test-callback'
-});
+let spotifyApi = require('../helpers/spotifyApi');
+
 module.exports = (sequelize, DataTypes) => {
   class Song extends Model {
     /**
@@ -20,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Song.hasMany(models.PlaylistSong, { foreignKey: 'SongId', as: 'PlaylistSong'})
     }
-    static sortSongs(sort, filter, Song) {
+    static sortSongs(sort, filter) {
       let obj = {}
       if (filter) {
         obj.where = {
@@ -35,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         else if (sort === 'title') obj.order = [ ['title', 'asc'] ]
         else if (sort === 'titledesc') obj.order = [ ['title', 'desc'] ]
       }
-      return Song.findAll(obj)
+      return this.findAll(obj)
     }
   }
   Song.init({
@@ -50,21 +46,6 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           args: true,
           msg: "Title cannot be empty"
-        },
-        isValidSong(title) {
-          spotifyApi.clientCredentialsGrant()
-            .then(data=> {
-              return spotifyApi.setAccessToken(data.body['access_token']);
-            })
-            .then(data => {
-              return spotifyApi.searchTracks(`track:${title} ${this.artist}`)
-            }).then(data => {
-              if (typeof data.body.tracks.items[0] == 'undefined') {
-                throw new Error('Title song not found')
-              }
-            }).catch(err => {
-              console.log(err)
-            })
         }
       }
     },
