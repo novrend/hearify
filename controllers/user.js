@@ -39,19 +39,33 @@ class Controller {
                         req.session.user = result
                         res.redirect('/')
                     } else {
-                        res.redirect('/login?err=Invalid email or password')
+                        let err = {
+                            email: "Invalid email or password"
+                        }
+                        res.redirect(`/login?err=${JSON.stringify(err)}`)
                     }
                 } else {
-                    res.redirect('/login?err=Invalid email or password')
+                    let err = {
+                        email: "Invalid email or password"
+                    }
+                    res.redirect(`/login?err=${JSON.stringify(err)}`)
                 }
             })
             .catch(err => {
-                res.send(err)
+                if (err.errors) {
+                    let errors = {}
+                    for (let error of err.errors) {
+                        errors[error.path] = error.message
+                    }
+                    res.redirect(`/login?err=${JSON.stringify(errors)}`)
+                } else {
+                    res.send(err)
+                }
             })
     }
     static registerPage(req, res) {
-        const { err } = req.query
-        res.render('register', { err })
+        const { err, input } = req.query
+        res.render('register', { err, input })
     }
     static register(req, res) {
         const { email, username, password, password2 } = req.body
@@ -65,10 +79,16 @@ class Controller {
         })
             .then(result => {
                 if (result) {
-                    res.redirect('/register?err=Email or username is already taken')
+                    let err = {
+                        email: "Email or username is already taken"
+                    }
+                    res.redirect(`/register?err=${JSON.stringify(err)}`)
                 } else {
                     if (password !== password2) {
-                        res.redirect('/register?err=The password confirmation does not match')
+                        let err = {
+                            password: "The password confirmation does not match"
+                        }
+                        res.redirect(`/register?err=${JSON.stringify(err)}`)
                     } else {
                         return User.create({
                             username,
@@ -83,10 +103,20 @@ class Controller {
                 if (result) {
                     req.session.user = result
                     res.redirect('/')
+                } else {
+                    res.redirect('/login')
                 }
             })
             .catch(err => {
-                res.send(err)
+                if (err.errors) {
+                    let errors = {}
+                    for (let error of err.errors) {
+                        errors[error.path] = error.message
+                    }
+                    res.redirect(`/register?err=${JSON.stringify(errors)}&input=${JSON.stringify({email, username})}`)
+                } else {
+                    res.send(err)
+                }
             })
     }
     static logout(req, res) {

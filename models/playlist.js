@@ -22,7 +22,6 @@ module.exports = (sequelize, DataTypes) => {
       Playlist.hasMany(models.PlaylistSong, {foreignKey: 'PlaylistId'})
     }
     static spotifyApi(ress, data) {
-      spotifyApi.clientCredentialsGrant()
       spotifyApi.setAccessToken(data.body['access_token']);
       const send = song =>
         new Promise(resolve => {
@@ -101,7 +100,29 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     UserId: DataTypes.INTEGER,
-    thumbnailUrl: DataTypes.STRING
+    thumbnailUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          args: true,
+          msg: "Thumbnail url cannot be empty"
+        },
+        notEmpty: {
+          args: true,
+          msg: "Thumbnail url cannot be empty"
+        },
+        isUrl: {
+          args: true,
+          msg: "Please input valid url format"
+        },
+        isImage(thumbnailUrl) {
+          if (!['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG'].includes(thumbnailUrl.slice(-4))){
+            throw new Error('Only PNG, JPG, and JPEG files')
+          }
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Playlist',

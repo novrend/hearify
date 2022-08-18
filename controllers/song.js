@@ -47,7 +47,8 @@ class Controller {
             })
     }
     static addSongPage(req, res) {
-        res.render('addSong')
+        const { err, input } = req.query
+        res.render('addSong', { err, input })
     }
     static addSong(req, res) {
         const { title, artist } = req.body
@@ -58,10 +59,19 @@ class Controller {
                 res.redirect('/songs')
             })
             .catch(err => {
-                res.send(err)
+                if (err.errors) {
+                    let errors = {}
+                    for (let error of err.errors) {
+                        errors[error.path] = error.message
+                    }
+                    res.redirect(`/songs/add?err=${JSON.stringify(errors)}&input=${JSON.stringify(req.body)}`)
+                } else {
+                    res.send(err)
+                }
             })
     }
     static editSongPage(req, res) {
+        const { err, input } = req.query
         const { songId } = req.params
         Song.findOne({
             where: {
@@ -71,7 +81,7 @@ class Controller {
             }
         })
             .then(results => {
-                res.render('editSong', { song: results })
+                res.render('editSong', { song: results, err, input })
             })
             .catch(err => {
                 res.send(err)
@@ -93,7 +103,15 @@ class Controller {
                 res.redirect('/songs')
             })
             .catch(err => {
-                res.send(err)
+                if (err.errors) {
+                    let errors = {}
+                    for (let error of err.errors) {
+                        errors[error.path] = error.message
+                    }
+                    res.redirect(`/songs/${songId}/edit?err=${JSON.stringify(errors)}&input=${JSON.stringify(req.body)}`)
+                } else {
+                    res.send(err)
+                }
             })
     }
     static deleteSong(req, res) {

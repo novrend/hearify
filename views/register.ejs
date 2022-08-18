@@ -22,14 +22,17 @@
     <div class="container p-5 mt-5 rounded col-4 text-light fw-light" style="background-color: #242424; box-shadow: 0 4px 8px rgba(0,0,0,.05);">
         <div class="mb-4 text-center"><h1>Register</h1></div>
         <form action="/register" method="post">
-            <div class="text-danger"><%= err ? err : "" %></div>
+            <% err ? err = JSON.parse(err) : "" %>
+            <% input ? input = JSON.parse(input) : "" %>
             <div class="form-floating mb-3">
-                <input name="email" type="email" class="form-control bg-dark text-light fw-light" id="email" placeholder="name@example.com" autocomplete="off">
+                <input name="email" type="email" class="form-control bg-dark text-light fw-light" id="email" placeholder="name@example.com" value="<%= input ? input.email : "" %>" autocomplete="off">
                 <label for="email">Email address</label>
+                <div class="fw-light text-danger"><%= err ? err.email : "" %></div>
             </div>
             <div class="form-floating mb-3">
-                <input name="username" type="text" class="form-control bg-dark text-light fw-light" id="username" placeholder="name@example.com" autocomplete="off">
+                <input name="username" type="text" class="form-control bg-dark text-light fw-light" id="username" placeholder="name@example.com" value="<%= input ? input.username : "" %>" autocomplete="off">
                 <label for="username">Username</label>
+                <div class="fw-light text-danger"><%= err ? err.username : "" %></div>
             </div>
             <div class="form-floating mb-3">
                 <input name="password" type="password" class="form-control bg-dark text-light fw-light" id="password" placeholder="Password">
@@ -37,6 +40,7 @@
                 <label for="password">Password</label>
                 <div class="d-none" id="mark">!&#x20DD;</div>
                 <p id="strength" class="d-none"></p>
+                <div class="fw-light text-danger"><%= err ? err.password : "" %></div>
             </div>
             <div class="form-floating mb-3">
                 <input name="password2" type="password" class="form-control bg-dark text-light fw-light" id="password2" placeholder="Password">

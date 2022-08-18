@@ -15,13 +15,17 @@
             <h1>Add New Playlist</h1>
         </div>
         <form action="/playlists/add" method="post">
+            <% err ? err = JSON.parse(err) : "" %>
+            <% input ? input = JSON.parse(input) : "" %>
             <div class="form-floating mb-3 text-light">
-                <input name="name" type="text" class="form-control bg-dark text-light fw-light" id="name" placeholder="Hot Hit's Indonesia" autocomplete="off">
+                <input name="name" type="text" class="form-control bg-dark text-light fw-light" id="name" placeholder="Hot Hit's Indonesia" autocomplete="off" value="<%= input ? input.name : "" %>">
                 <label for="name">Playlist name</label>
+                <div class="fw-light text-danger"><%= err ? err.name : "" %></div>
             </div>
             <div class="form-floating mb-3 text-light">
-                <input name="thumbnailUrl" type="text" class="form-control bg-dark text-light fw-light" id="thumbnailUrl" placeholder="Thumbnail Url" autocomplete="off">
+                <input name="thumbnailUrl" type="text" class="form-control bg-dark text-light fw-light" id="thumbnailUrl" placeholder="Thumbnail Url" autocomplete="off" value="<%= input ? input.thumbnailUrl : "" %>">
                 <label for="thumbnailUrl">Thumbnail Url</label>
+                <div class="fw-light text-danger"><%= err ? err.thumbnailUrl : "" %></div>
             </div>
             <div class="form-floating d-grid mb-3">
                 <button type="submit" class="btn btn-outline-secondary btn-lg">Add new playlist</button>

@@ -26,11 +26,12 @@ class Controller {
             })
     }
     static addPlaylistPage(req, res) {
-        res.render('addPlaylist')
+        const { err, input } = req.query
+        res.render('addPlaylist', { err, input })
     }
     static addPlaylist(req, res) {
-        const { name, thumbnailUrl } = req.body
         const { id } = req.session.user
+        const { name, thumbnailUrl } = req.body
         Playlist.create({
             name,
             thumbnailUrl,
@@ -40,7 +41,15 @@ class Controller {
                 res.redirect(`/playlists/${results.id}`)
             })
             .catch(err => {
-                res.send(err)
+                if (err.errors) {
+                    let errors = {}
+                    for (let error of err.errors) {
+                        errors[error.path] = error.message
+                    }
+                    res.redirect(`/playlists/add?err=${JSON.stringify(errors)}&input=${JSON.stringify(req.body)}`)
+                } else {
+                    res.send(err)
+                }
             })
     }
     static playlistDetailPage(req, res) {
@@ -68,7 +77,7 @@ class Controller {
                     const { sort, filter } = req.query
                     return Playlist.sortPlaylist(playlistId, sort, filter, PlaylistSong, Song)
                 } else {
-                    res.send('This is not your playlist')
+                    res.send('Playlist not foud')
                 }
             })
             .then(results => {
@@ -113,6 +122,7 @@ class Controller {
     static editPlaylistPage(req, res) {
         const { id } = req.session.user
         const { playlistId } = req.params
+        const { err, input } = req.query
         Playlist.findOne({
             where : {
                 [Op.and]: [
@@ -131,9 +141,9 @@ class Controller {
         })
             .then(results => {
                 if (results) {
-                    res.render('editPlaylist', { playlist: results })
+                    res.render('editPlaylist', { playlist: results, err, input })
                 } else {
-                    res.send('This is not your playlist')
+                    res.send('Playlist not found')
                 }
             })
             .catch(err => {
@@ -172,16 +182,26 @@ class Controller {
                         }
                     })
                 } else {
-                    res.send('This is not your playlist')
+                    res.send('Playlist not found')
                 }
             })
             .then(results => {
                 if (results) {
                     res.redirect(`/playlists/${playlistId}`)
+                } else {
+                    res.send('Empty data')
                 }
             })
             .catch(err => {
-                res.send(err)
+                if (err.errors) {
+                    let errors = {}
+                    for (let error of err.errors) {
+                        errors[error.path] = error.message
+                    }
+                    res.redirect(`/playlists/${playlistId}/edit?err=${JSON.stringify(errors)}&input=${JSON.stringify(req.body)}`)
+                } else {
+                    res.send(err)
+                }
             })
     }
     static editPlaylistSongPage(req, res) {
@@ -251,10 +271,11 @@ class Controller {
             .then(results => {
                 if (results) {
                     return sequelize.query(`
+                    SELECT artist FROM "Songs" WHERE artist NOT IN (
                         SELECT s.artist FROM "Playlists" p
                         JOIN "PlaylistSongs" ps ON p.id = ps."PlaylistId" 
-                        JOIN "Songs" s ON ps."SongId" = s.id WHERE p.id != ${playlistId}
-                        GROUP BY s.artist`, {
+                        JOIN "Songs" s ON ps."SongId" = s.id WHERE p.id = 8)
+                        GROUP BY artist`, {
                             type: QueryTypes.SELECT
                     })
                 } else {

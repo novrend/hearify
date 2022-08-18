@@ -3,6 +3,12 @@ const {
   Model
 } = require('sequelize');
 const { Op } = require('sequelize');
+const SpotifyWebApi = require('spotify-web-api-node');
+let spotifyApi = new SpotifyWebApi({
+    clientId: '54ad5ca56d494d1ba439c7a366e3f09a',
+    clientSecret: 'f916b7c948fe4a48a71b39d2853c8562',
+    redirectUri: 'http://www.michaelthelin.se/test-callback'
+});
 module.exports = (sequelize, DataTypes) => {
   class Song extends Model {
     /**
@@ -33,8 +39,49 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Song.init({
-    title: DataTypes.STRING,
-    artist: DataTypes.STRING
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          args: true,
+          msg: "Title cannot be empty"
+        },
+        notEmpty: {
+          args: true,
+          msg: "Title cannot be empty"
+        },
+        isValidSong(title) {
+          spotifyApi.clientCredentialsGrant()
+            .then(data=> {
+              return spotifyApi.setAccessToken(data.body['access_token']);
+            })
+            .then(data => {
+              return spotifyApi.searchTracks(`track:${title} ${this.artist}`)
+            }).then(data => {
+              if (typeof data.body.tracks.items[0] == 'undefined') {
+                throw new Error('Title song not found')
+              }
+            }).catch(err => {
+              console.log(err)
+            })
+        }
+      }
+    },
+    artist: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          args: true,
+          msg: "Artist cannot be empty"
+        },
+        notEmpty: {
+          args: true,
+          msg: "Artist cannot be empty"
+        }
+      }
+    }
   }, {
     sequelize,
     modelName: 'Song',
