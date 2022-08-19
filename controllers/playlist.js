@@ -358,9 +358,10 @@ class Controller {
             })
     }
     static allPlaylistsDetailPage(req, res) {
+        const { err } = req.params
         Playlist.findAll()
             .then(results => {
-                res.render('playlists', { playlists: results })
+                res.render('playlists', { playlists: results, err })
             })
             .catch(err => {
                 res.send(err)
