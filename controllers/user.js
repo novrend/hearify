@@ -39,16 +39,18 @@ class Controller {
                         req.session.user = result
                         res.redirect('/')
                     } else {
-                        let err = {
-                            email: "Invalid email or password"
-                        }
-                        res.redirect(`/login?err=${JSON.stringify(err)}`)
+                        let errors = [{
+                            path: "email",
+                            message: 'Invalid email or password'
+                        }]
+                        throw {errors}
                     }
                 } else {
-                    let err = {
-                        email: "Invalid email or password"
-                    }
-                    res.redirect(`/login?err=${JSON.stringify(err)}`)
+                    let errors = [{
+                        path: "email",
+                        message: 'Invalid email or password'
+                    }]
+                    throw {errors}
                 }
             })
             .catch(err => {
@@ -79,16 +81,18 @@ class Controller {
         })
             .then(result => {
                 if (result) {
-                    let err = {
-                        email: "Email or username is already taken"
-                    }
-                    res.redirect(`/register?err=${JSON.stringify(err)}`)
+                    let errors = [{
+                        path: "email",
+                        message: 'Email or username is already taken'
+                    }]
+                    throw {errors}
                 } else {
                     if (password !== password2) {
-                        let err = {
-                            password: "The password confirmation does not match"
-                        }
-                        res.redirect(`/register?err=${JSON.stringify(err)}`)
+                        let errors = [{
+                            path: "email",
+                            message: 'The password confirmation does not match'
+                        }]
+                        throw {errors}
                     } else {
                         return User.create({
                             username,

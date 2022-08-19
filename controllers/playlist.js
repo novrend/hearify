@@ -50,16 +50,16 @@ class Controller {
     static playlistDetailPage(req, res) {
         const { id, role } = req.session.user
         const { playlistId } = req.params
-        if (role !== 'admin') {
-            query.where.UserId = {
-                [Op.eq] : id
-            }
-        }
         let query = {
             where : {
                 id : {
                     [Op.eq] : playlistId
                 }
+            }
+        }
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
         }
         let playlistData
@@ -112,16 +112,16 @@ class Controller {
         const { id, role } = req.session.user
         const { playlistId } = req.params
         const { err, input } = req.query
-        if (role !== 'admin') {
-            query.where.UserId = {
-                [Op.eq] : id
-            }
-        }
         let query = {
             where : {
                 id : {
                     [Op.eq] : playlistId
                 }
+            }
+        }
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
         }
         Playlist.findOne(query)
@@ -140,16 +140,16 @@ class Controller {
         const { id, role } = req.session.user
         const { playlistId } = req.params
         const { name, thumbnailUrl } = req.body
-        if (role !== 'admin') {
-            query.where.UserId = {
-                [Op.eq] : id
-            }
-        }
         let query = {
             where : {
                 id : {
                     [Op.eq] : playlistId
                 }
+            }
+        }
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
         }
         Playlist.findOne(query)
@@ -190,16 +190,16 @@ class Controller {
     static editPlaylistSongPage(req, res) {
         const { id, role } = req.session.user
         const { playlistId } = req.params
-        if (role !== 'admin') {
-            query.where.UserId = {
-                [Op.eq] : id
-            }
-        }
         let query = {
             where : {
                 id : {
                     [Op.eq] : playlistId
                 }
+            }
+        }
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
         }
         let playlistData = {}
@@ -272,16 +272,16 @@ class Controller {
     static editPlaylistSong(req, res) {
         const { id, role } = req.session.user
         const { playlistId, songId } = req.params
-        if (role !== 'admin') {
-            query.where.UserId = {
-                [Op.eq] : id
-            }
-        }
         let query = {
             where : {
                 id : {
                     [Op.eq] : playlistId
                 }
+            }
+        }
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
         }
         Playlist.findOne(query)
@@ -319,16 +319,16 @@ class Controller {
     static deleteSongFromPlaylist(req, res) {
         const { id, role } = req.session.user
         const { playlistId, songId } = req.params
-        if (role !== 'admin') {
-            query.where.UserId = {
-                [Op.eq] : id
-            }
-        }
         let query = {
             where : {
                 id : {
                     [Op.eq] : playlistId
                 }
+            }
+        }
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
         }
         Playlist.findOne(query)
@@ -371,16 +371,16 @@ class Controller {
         const { id, role } = req.session.user
         const { playlistId } = req.params
         let deleted
-        if (role !== 'admin') {
-            query.where.UserId = {
-                [Op.eq] : id
-            }
-        }
         let query = {
             where : {
                 id : {
                     [Op.eq] : playlistId
                 }
+            }
+        }
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
         }
         Playlist.findOne(query)
