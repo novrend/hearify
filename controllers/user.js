@@ -93,8 +93,7 @@ class Controller {
                         return User.create({
                             username,
                             email,
-                            password,
-                            role: "user"
+                            password
                         })
                     }
                 }

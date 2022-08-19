@@ -1,5 +1,5 @@
 const express = require('express');
-const router = require('./routes');
+const routes = require('./routes');
 const session = require('express-session');
 
 const app = express()
@@ -17,7 +17,7 @@ app.use(session({
     }
 }))
 app.use(express.static('public'))
-app.use('/', router)
+app.use('/', routes)
 
 app.listen(PORT, () => {
     console.log('this app running on port', PORT)

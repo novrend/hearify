@@ -12,7 +12,6 @@
     <div class="container p-5 text-light fw-lighter">
         <div class="d-flex flex-row">
             <div class="col-8 my-2 d-flex align-items-end">
-            <!-- <div class="col my-2 d-flex align-items-end"> -->
                 <h1 class="me-4">List Songs</h1>
                 <h3><a href="/songs/add" class="btn btn-outline-secondary ms-4">Add new song</a></h3>
             </div>
@@ -20,8 +19,6 @@
                 <form class="align-self-end align-items-center text-light fw-lighter d-flex my-3">
                     <div class="col-4">Filter by artist :</div>
                     <select name="filter" id="filter" class="form-select bg-dark text-light fw-lighter" style="width: 200px">
-                    <!-- <div class="col-4 ms-4">Filter by artist :</div>
-                    <select name="filter" id="filter" class="col form-select bg-dark text-light fw-lighter"> -->
                         <option disabled selected>select artist</option>
                         <% for (artist of artists) { %>
                         <option value="<%= artist.artist %>"><%= artist.artist %></option>

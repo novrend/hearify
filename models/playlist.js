@@ -17,9 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       Playlist.belongsTo(models.User, {foreignKey: 'UserId'})
       Playlist.hasMany(models.PlaylistSong, {foreignKey: 'PlaylistId'})
     }
-    static spotifyApi(ress) {
+    static spotifyApi(songs) {
       let promises = []
-      for (let song of ress) {
+      for (let song of songs) {
         promises.push(spotifyApi.searchTracks(`track:${song.title ? song.title : song.Song.title} ${song.artist ? song.artist : song.Song.artist}`))
       }
       return Promise.all(promises)

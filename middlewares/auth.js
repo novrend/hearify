@@ -1,4 +1,4 @@
-const isLogged = (req, res, next) => {
+const isNotLoggedIn = (req, res, next) => {
     req.session.user ? res.redirect('/') : next()
 }
 const isLoggedIn = (req, res, next) => {
@@ -8,4 +8,4 @@ const isAdmin = (req, res, next) => {
     req.session.user.role === "admin" ? next() : res.redirect('/')
 }
 
-module.exports = { isLogged, isLoggedIn, isAdmin }
+module.exports = { isNotLoggedIn, isLoggedIn, isAdmin }

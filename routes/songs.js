@@ -6,6 +6,7 @@ router.use(isLoggedIn)
 router.get('/', Song.songsPage)
 router.get('/add', Song.addSongPage)
 router.post('/add', Song.addSong)
+
 router.use(isAdmin)
 router.get('/:songId/edit', Song.editSongPage)
 router.post('/:songId/edit', Song.editSong)

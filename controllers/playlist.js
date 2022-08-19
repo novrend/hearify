@@ -5,6 +5,7 @@ const { QueryTypes } = require('sequelize');
 class Controller {
     static playlistsPage(req, res) {
         const { id } = req.session.user
+        const { err } = req.query
         Playlist.findAll({
             where: {
                 UserId: {
@@ -13,7 +14,7 @@ class Controller {
             }
         })
             .then(results => {
-                res.render('playlists', { playlists: results })
+                res.render('playlists', { playlists: results, err })
             })
             .catch(err => {
                 res.send(err)
@@ -47,25 +48,22 @@ class Controller {
             })
     }
     static playlistDetailPage(req, res) {
-        const { id } = req.session.user
+        const { id, role } = req.session.user
         const { playlistId } = req.params
-        let ress
-        Playlist.findOne({
-            where : {
-                [Op.and]: [
-                    {
-                        UserId : {
-                            [Op.eq] : id
-                        },
-                    },
-                    {
-                        id : {
-                            [Op.eq] : playlistId
-                        }
-                    }
-                ]
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
-        })
+        }
+        let query = {
+            where : {
+                id : {
+                    [Op.eq] : playlistId
+                }
+            }
+        }
+        let playlistData
+        Playlist.findOne(query)
             .then(results => {
                 if (results) {
                     const { sort, filter } = req.query
@@ -76,8 +74,8 @@ class Controller {
             })
             .then(data => {
                 if (data) {
-                    ress = data
-                    return Playlist.spotifyApi(ress.PlaylistSongs)
+                    playlistData = data
+                    return Playlist.spotifyApi(playlistData.PlaylistSongs)
                 } else {
                     res.send('Empty data')
                 }
@@ -85,8 +83,8 @@ class Controller {
             .then(results => {
                 if (results) {
                     results.forEach((el,i) => {
-                        ress.PlaylistSongs[i].Song.link = el.body.tracks.items[0].preview_url
-                        ress.PlaylistSongs[i].Song.album = el.body.tracks.items[0].album.images[1].url
+                        playlistData.PlaylistSongs[i].Song.link = el.body.tracks.items[0].preview_url
+                        playlistData.PlaylistSongs[i].Song.album = el.body.tracks.items[0].album.images[1].url
                     })
                     return sequelize.query(`
                         SELECT s.artist FROM "Playlists" p
@@ -101,36 +99,32 @@ class Controller {
             })
             .then(results => {
                 if (results) {
-                    res.render('playlistDetail', {playlist: ress, artists: results})
+                    res.render('playlistDetail', {playlist: playlistData, artists: results})
                 } else {
                     res.send('Empty data')
                 }
             })
             .catch(err => {
-                console.log(err)
                 res.send(err)
             })
     }
     static editPlaylistPage(req, res) {
-        const { id } = req.session.user
+        const { id, role } = req.session.user
         const { playlistId } = req.params
         const { err, input } = req.query
-        Playlist.findOne({
-            where : {
-                [Op.and]: [
-                    {
-                        UserId : {
-                            [Op.eq] : id
-                        },
-                    },
-                    {
-                        id : {
-                            [Op.eq] : playlistId
-                        }
-                    }
-                ]
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
-        })
+        }
+        let query = {
+            where : {
+                id : {
+                    [Op.eq] : playlistId
+                }
+            }
+        }
+        Playlist.findOne(query)
             .then(results => {
                 if (results) {
                     res.render('editPlaylist', { playlist: results, err, input })
@@ -143,25 +137,22 @@ class Controller {
             })
     }
     static editPlaylist(req, res) {
-        const { id } = req.session.user
+        const { id, role } = req.session.user
         const { playlistId } = req.params
         const { name, thumbnailUrl } = req.body
-        Playlist.findOne({
-            where : {
-                [Op.and]: [
-                    {
-                        UserId : {
-                            [Op.eq] : id
-                        },
-                    },
-                    {
-                        id : {
-                            [Op.eq] : playlistId
-                        }
-                    }
-                ]
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
-        })
+        }
+        let query = {
+            where : {
+                id : {
+                    [Op.eq] : playlistId
+                }
+            }
+        }
+        Playlist.findOne(query)
             .then(results => {
                 if (results) {
                     return Playlist.update({
@@ -197,30 +188,26 @@ class Controller {
             })
     }
     static editPlaylistSongPage(req, res) {
-        const { id } = req.session.user
+        const { id, role } = req.session.user
         const { playlistId } = req.params
-        let playlist = {}
-        let ress
-        Playlist.findOne({
-            where : {
-                [Op.and]: [
-                    {
-                        UserId : {
-                            [Op.eq] : id
-                        },
-                    },
-                    {
-                        id : {
-                            [Op.eq] : playlistId
-                        }
-                    }
-                ]
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
-        })
+        }
+        let query = {
+            where : {
+                id : {
+                    [Op.eq] : playlistId
+                }
+            }
+        }
+        let playlistData = {}
+        Playlist.findOne(query)
             .then(results => {
                 if (results) {
                     const { sort, filter } = req.query
-                    playlist = results
+                    playlistData = results
                     let query = `
                         SELECT * FROM "Songs" WHERE "id" NOT IN (
                             SELECT "Song"."id" AS "Song.id"
@@ -242,13 +229,13 @@ class Controller {
                         type: QueryTypes.SELECT
                     })
                 } else {
-                    res.send('This is not your playlist')
+                    res.send('Playlist not found')
                 }
             })
             .then(data => {
                 if (data) {
-                    ress = data
-                    return Playlist.spotifyApi(ress)
+                    playlistData.Songs = data
+                    return Playlist.spotifyApi(playlistData.Songs)
                 } else {
                     res.send('Empty Data')
                 }
@@ -256,8 +243,8 @@ class Controller {
             .then(results => {
                 if (results) {
                     results.forEach((el,i) => {
-                        ress[i].link = el.body.tracks.items[0].preview_url
-                        ress[i].album = el.body.tracks.items[0].album.images[1].url
+                        playlistData.Songs[i].link = el.body.tracks.items[0].preview_url
+                        playlistData.Songs[i].album = el.body.tracks.items[0].album.images[1].url
                     })
                     return sequelize.query(`
                         SELECT artist FROM "Songs" WHERE artist NOT IN (
@@ -273,8 +260,7 @@ class Controller {
             })
             .then(results => {
                 if (results) {
-                    playlist.Songs = ress
-                    res.render('playlistSong', { playlist: playlist, artists: results })
+                    res.render('playlistSong', { playlist: playlistData, artists: results })
                 } else {
                     res.send('Empty Data')
                 }
@@ -284,24 +270,21 @@ class Controller {
             })
     }
     static editPlaylistSong(req, res) {
-        const { id } = req.session.user
+        const { id, role } = req.session.user
         const { playlistId, songId } = req.params
-        Playlist.findOne({
-            where : {
-                [Op.and]: [
-                    {
-                        UserId : {
-                            [Op.eq] : id
-                        },
-                    },
-                    {
-                        id : {
-                            [Op.eq] : playlistId
-                        }
-                    }
-                ]
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
-        })
+        }
+        let query = {
+            where : {
+                id : {
+                    [Op.eq] : playlistId
+                }
+            }
+        }
+        Playlist.findOne(query)
             .then(results => {
                 if (results) {
                     return PlaylistSong.findOne({
@@ -316,8 +299,6 @@ class Controller {
             })
             .then(results => {
                 if (results) {
-                    console.log(results)
-                    console.log(playlistId, songId)
                     res.send('You already added this song')
                 } else {
                     return PlaylistSong.create({
@@ -336,44 +317,35 @@ class Controller {
             })
     }
     static deleteSongFromPlaylist(req, res) {
-        const { id } = req.session.user
+        const { id, role } = req.session.user
         const { playlistId, songId } = req.params
-        Playlist.findOne({
-            where : {
-                [Op.and]: [
-                    {
-                        UserId : {
-                            [Op.eq] : id
-                        },
-                    },
-                    {
-                        id : {
-                            [Op.eq] : playlistId
-                        }
-                    }
-                ]
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
             }
-        })
+        }
+        let query = {
+            where : {
+                id : {
+                    [Op.eq] : playlistId
+                }
+            }
+        }
+        Playlist.findOne(query)
             .then(results => {
                 if (results) {
                     return PlaylistSong.destroy({
                         where: {
-                            [Op.and] : [
-                                {
-                                    PlaylistId: {
-                                        [Op.eq] : playlistId
-                                    }
-                                },
-                                {
-                                    SongId: {
-                                        [Op.eq] : songId
-                                    }
-                                }
-                            ]
+                            PlaylistId: {
+                                [Op.eq] : playlistId
+                            },
+                            SongId: {
+                                [Op.eq] : songId
+                            }
                         }
                     })
                 } else {
-                    res.send('This is not your playlist')
+                    res.send('Playlist not found')
                 }
             })
             .then(results => {
@@ -389,6 +361,48 @@ class Controller {
         Playlist.findAll()
             .then(results => {
                 res.render('playlists', { playlists: results })
+            })
+            .catch(err => {
+                res.send(err)
+            })
+    }
+    static deletePlaylist(req, res) {
+        const { id, role } = req.session.user
+        const { playlistId } = req.params
+        let deleted
+        if (role !== 'admin') {
+            query.where.UserId = {
+                [Op.eq] : id
+            }
+        }
+        let query = {
+            where : {
+                id : {
+                    [Op.eq] : playlistId
+                }
+            }
+        }
+        Playlist.findOne(query)
+            .then(results => {
+                deleted = results.name
+                if (results) {
+                    return Playlist.destroy({
+                        where: {
+                            id : {
+                                [Op.eq] : playlistId
+                            }
+                        }
+                    })
+                } else {
+                    res.send('Playlist not found')
+                }
+            })
+            .then(results => {
+                if (results) {
+                    res.redirect(`/playlists?err=Playlist ${deleted} has been deleted`)
+                } else {
+                    res.send('Empty data')
+                }
             })
             .catch(err => {
                 res.send(err)

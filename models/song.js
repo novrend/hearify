@@ -3,7 +3,6 @@ const {
   Model
 } = require('sequelize');
 const { Op } = require('sequelize');
-let spotifyApi = require('../helpers/spotifyApi');
 
 module.exports = (sequelize, DataTypes) => {
   class Song extends Model {
@@ -16,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Song.hasMany(models.PlaylistSong, { foreignKey: 'SongId', as: 'PlaylistSong'})
     }
+
     static sortSongs(sort, filter) {
       let obj = {}
       if (filter) {
@@ -46,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           args: true,
           msg: "Title cannot be empty"
+        },
+        len : {
+          args: [1,64],
+          msg: "Maximum 64 characters"
         }
       }
     },
@@ -60,7 +64,11 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           args: true,
           msg: "Artist cannot be empty"
-        }
+        },
+        len : {
+          args: [1,64],
+          msg: "Maximum 64 characters"
+        },
       }
     }
   }, {

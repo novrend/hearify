@@ -29,11 +29,8 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     username: {
       type: DataTypes.STRING,
-      unique: {
-        args: true,
-        msg: "Username already taken"
-      },
       allowNull: false,
+      unique: true,
       validate: {
         isAlphanumeric: {
           args: true,
@@ -46,16 +43,17 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           args: true,
           msg: "Username cannot be empty"
+        },
+        len : {
+          args: [1,64],
+          msg: "Maximum 64 characters"
         }
       }
     },
     email: {
       type: DataTypes.STRING,
-      unique: {
-        args: true,
-        msg: "Email already taken"
-      },
       allowNull: false,
+      unique: true,
       validate: {
         isEmail: {
           args: true,
@@ -68,6 +66,10 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: {
           args: true,
           msg: "Email cannot be empty"
+        },
+        len : {
+          args: [6,64],
+          msg: "Maximum 64 characters"
         }
       }
     },
@@ -101,6 +103,7 @@ module.exports = (sequelize, DataTypes) => {
       beforeCreate: (user) => {
         const salt = bcrypt.genSaltSync(10);
         user.password = bcrypt.hashSync(user.password, salt);
+        user.role = 'user'
       }
     },
     modelName: 'User',
