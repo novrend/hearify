@@ -34,7 +34,6 @@ class Controller {
                 }
             })
             .catch(err => {
-                console.log(err)
                 res.send(err)
             })
     }
@@ -73,7 +72,6 @@ class Controller {
                     }]
                     throw {errors}
                 } else {
-                    console.log(';;;;;;;')
                     return Song.create({
                         title, artist
                     })
@@ -81,20 +79,17 @@ class Controller {
             })
             .then(results => {
                 if (results) {
-                    console.log(results)
                     res.redirect('/songs')
                 }
             })
             .catch(err => {
                 if (err.errors) {
-                    console.log(err)
                     let errors = {}
                     for (let error of err.errors) {
                         errors[error.path] = error.message
                     }
                     res.redirect(`/songs/add?err=${JSON.stringify(errors)}&input=${JSON.stringify(req.body)}`)
                 } else {
-                    console.log(err)
                     res.send(err)
                 }
             })
@@ -126,10 +121,11 @@ class Controller {
         Playlist.spotifyApi([{title, artist}])
             .then(data => {
                 if (typeof data[0].body.tracks.items[0] == 'undefined') {
-                    let errors = {
-                        title: 'Title song not found'
-                    }
-                    res.redirect(`/songs/${songId}/edit?err=${JSON.stringify(errors)}&input=${JSON.stringify(req.body)}`)
+                    let errors = [{
+                        path: "title",
+                        message: 'Title song not found'
+                    }]
+                    throw {errors}
                 } else {
                     return Song.findOne({
                         where: {
@@ -145,10 +141,11 @@ class Controller {
             })
             .then(results => {
                 if (results) {
-                    let errors = {
-                        title: 'Song already added'
-                    }
-                    res.redirect(`/songs/add?err=${JSON.stringify(errors)}&input=${JSON.stringify(req.body)}`)
+                    let errors = [{
+                        path: "title",
+                        message: 'Song already added'
+                    }]
+                    throw {errors}
                 } else {
                     return Song.update({
                         title, artist
